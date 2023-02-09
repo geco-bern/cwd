@@ -14,8 +14,8 @@ Maintainer: <benjamin.stocker@gmail.com>
 Description: Derives cumulative water deficit events and time series.
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/stineb/cwd
-BugReports: https://github.com/stineb/cwd/issues
+URL: https://github.com/computationales/cwd
+BugReports: https://github.com/computationales/cwd/issues
 License: GPL-3
 Depends:
     R (>= 3.6)
