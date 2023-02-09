@@ -1,0 +1,23 @@
+Package: gecotemplate
+Title: pkgdown Template for CES Packages
+Version: 0.1
+Authors@R: c(person(
+               family = "Hufkens",
+               given = "Koen",
+               email = "koen.hufkens@gmail.com",
+               role = c("aut", "cre"),
+               comment = c(ORCID = "0000-0002-5070-8109")),
+             person(given = "BlueGreen Labs",
+              role = c("cph", "fnd"))
+               )
+Description: This is a private template for use by CES
+    packages.  Please don't use it for your own package.
+License: MIT
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1

@@ -1,0 +1,16 @@
+template:
+  package: gecotemplate
+
+destination: docs
+
+toc:
+  depth: 3
+
+navbar:
+  structure:
+    left:  [home, intro, reference, articles, tutorials, news]
+    right: [github]
+  components:
+    twitter:
+      icon: "fab fa-twitter fa-lg"
+      href: https://twitter.com/computationales
