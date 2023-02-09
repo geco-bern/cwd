@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>pkgdown Template for CES Packages • gecotemplate</title>
+<title>Derives time series of the cumulative water deficit (CWD), given time series of the daily soil water balance (infiltration minus evapotranspiration). • cwd</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="/apple-touch-icon.png">
@@ -18,9 +18,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,700;1,300;1,400&amp;display=swap" rel="stylesheet">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><!-- geco --><link href="geco.css" rel="stylesheet">
-<meta property="og:title" content="pkgdown Template for CES Packages">
-<meta property="og:description" content="This is a private template for use by CES
-    packages.  Please don't use it for your own package.">
+<meta property="og:title" content="Derives time series of the cumulative water deficit (CWD), given time series of the daily soil water balance (infiltration minus evapotranspiration).">
+<meta property="og:description" content="Derives cumulative water deficit events and time series.">
 <meta property="og:image" content="/logo.png">
 <meta name="twitter:card" content="summary">
 </head>
@@ -41,12 +40,12 @@
       </button>
 
       <div class="navbar-brand-container">
-        <a class="external-link hidden-sm hidden-xs" href="https://geco-group.org/">
-          <img src="https://raw.githubusercontent.com/computationales/GECO_template/main/geco_logo_white_small.png" id="hexlogo" alt="GECO"></a>
-        <a class="external-link hidden-md hidden-lg" href="https://geco-group.org/">
-          <img src="https://raw.githubusercontent.com/computationales/GECO_template/main/geco_logo_white_small.png" id="hexlogo" alt="GECO"></a>
+        <a class="external-link hidden-sm hidden-xs" href="https://computationales.ethz.ch/">
+          <img src="https://raw.githubusercontent.com/computationales/GECO_template/main/geco_logo_small.png" id="hexlogo" alt="GECO"></a>
+        <a class="external-link hidden-md hidden-lg" href="https://computationales.ethz.ch/">
+          <img src="https://raw.githubusercontent.com/computationales/GECO_template/main/geco_logo_small.png" id="hexlogo" alt="GECO"></a>
         <a class="navbar-brand" href="index.html">
-           <i>gecotemplate <small>v0.1</small></i>
+           <i>cwd <small>v1.0</small></i>
         </a>
       </div>
     </div>
@@ -64,11 +63,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/test.html">test</a>
+      <a href="articles/example.html">Example</a>
     </li>
   </ul>
 </li>
-        
+        <li>
+  <a href="https://github.com/stineb/cwd/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
 </div>
 <!--/.nav-collapse -->
@@ -82,17 +86,34 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="geco-pkgdown-template-">GECO pkgdown template <a href=""><img src="https://raw.githubusercontent.com/computationales/GECO_template/main/geco_logo_small.png" align="right" height="134"></a>
-<a class="anchor" aria-label="anchor" href="#geco-pkgdown-template-"></a>
+<div class="page-header"><h1 id="cwd-cumulative-water-deficit-algorithm">cwd: Cumulative water deficit algorithm.<a class="anchor" aria-label="anchor" href="#cwd-cumulative-water-deficit-algorithm"></a>
 </h1></div>
-<p>GECO_template provides a custom pkgdown template for GECO packages. Please don’t use it for your own package. This theme was inspired by inspired by <a href="https://github.com/tidyverse/tidytemplate/" class="external-link">tidytemplate</a>, <a href="https://github.com/ropensci-org/rotemplate/" class="external-link">rotemplate</a> and <a href="https://github.com/khufkens/bgtemplate" class="external-link">bgtemplate</a></p>
+<p>The function <code><a href="reference/cwd.html">cwd::cwd()</a></code> derives time series of the cumulative water deficit (CWD), given time series of the daily soil water balance (infiltration minus evapotranspiration). CWD “events” are identified as periods of consecutive days where the CWD is positive (a water deficit). CWD is set to zero after rain has reduced the CWD by a user-defined fraction, relative to maximum CWD attained during the same event.</p>
 <div class="section level2">
-<h2 id="how-to-use-geco_template">How to use <code>GECO_template</code>
-<a class="anchor" aria-label="anchor" href="#how-to-use-geco_template"></a>
+<h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
 </h2>
-<p>Install the template as an R package</p>
+<p>Please cite the published paper and the code as:</p>
+<div class="section level3">
+<h3 id="published-paper">Published paper<a class="anchor" aria-label="anchor" href="#published-paper"></a>
+</h3>
+<p>Stocker, B.D., Tumber-Davila, S.J., Konings, A.G., Anderson, M.B., Hain, C. and Jackson, R.B.: Global patterns of water storage in the rooting zones of vegetation, <em>Nature Geoscience</em>, <a href="https://www.nature.com/articles/s41561-023-01125-2" class="external-link uri">https://www.nature.com/articles/s41561-023-01125-2</a>, 2023</p>
+</div>
+<div class="section level3">
+<h3 id="code">Code<a class="anchor" aria-label="anchor" href="#code"></a>
+</h3>
+<p>Benjamin Stocker. (2021). cwd v1.0: R package for cumulative water deficit calculation (v1.0). Zenodo. <a href="https://doi.org/10.5281/zenodo.5359053" class="external-link uri">https://doi.org/10.5281/zenodo.5359053</a></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>In R:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"computationales/GECO_template"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"computationales/cwd"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="build-website-internal">Build website (internal)<a class="anchor" aria-label="anchor" href="#build-website-internal"></a>
+</h2>
 <p>Set the package template as the override template to use when rendering a package documentation using <code>pkgdown</code></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">template</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"gecotemplate"</span><span class="op">)</span></span>
@@ -114,11 +135,19 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-    <div class="license">
+    <div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/stineb/cwd/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/stineb/cwd/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a></small></li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></small></li>
 </ul>
 </div>
 
@@ -132,15 +161,14 @@
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing gecotemplate</a></li>
+<li><a href="authors.html#citation">Citing cwd</a></li>
 </ul>
 </div>
 
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Koen Hufkens <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-5070-8109" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>BlueGreen Labs <br><small class="roles"> Copyright holder, funder </small>  </li>
+<li>Stocker Benjamin <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-5070-8109" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 

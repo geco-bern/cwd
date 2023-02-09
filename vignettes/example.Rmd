@@ -1,8 +1,8 @@
 ---
-title: "test"
+title: "Example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{test}
+  %\VignetteIndexEntry{example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,15 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(bgtemplate)
-```
+# Example
 
-# Title 1
-
-## Subtitle 1
-
-## Subtitle 2 is actually very very long wow
-
-# Title 2
-
+No example provided.

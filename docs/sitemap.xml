@@ -10,6 +10,9 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
+    <loc>/articles/example.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -26,6 +29,9 @@
   </url>
   <url>
     <loc>/pull_request_template.html</loc>
+  </url>
+  <url>
+    <loc>/reference/cwd.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
