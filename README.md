@@ -22,5 +22,5 @@ Benjamin Stocker. (2021). cwd v1.0: R package for cumulative water deficit calcu
 
 In R:
 ```r
-devtools::install_github("computationales/cwd")
+devtools::install_github("geco-bern/cwd")
 ```
