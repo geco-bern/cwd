@@ -1,6 +1,6 @@
 Package: cwd
 Type: Package
-Title: Derives time series of the cumulative water deficit (CWD), given time series of the daily soil water balance (infiltration minus evapotranspiration).
+Title: Derives cumulative water deficit events and time series
 Version: 1.0
 Authors@R: c(
             person(
@@ -11,15 +11,14 @@ Authors@R: c(
               role = c("aut", "cre"))
               )
 Maintainer: <benjamin.stocker@gmail.com>
-Description: Derives cumulative water deficit events and time series.
+Description: Derives time series of the cumulative water deficit (CWD), given time series of the daily soil water balance (infiltration minus evapotranspiration).
 Encoding: UTF-8
-LazyData: true
 URL: https://github.com/geco-bern/cwd
 BugReports: https://github.com/geco-bern/cwd/issues
 License: GPL-3
 Depends:
     R (>= 3.6)
 Imports:
-    dplyr,
+    dplyr
 ByteCompile: true
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
