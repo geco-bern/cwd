@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5359053.svg)](https://doi.org/10.5281/zenodo.5359053)
+
 # The cumulative water deficit algorithm
 
 ## Context
