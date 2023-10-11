@@ -81,9 +81,7 @@
 <div class="section level2">
 <h2 id="context">Context<a class="anchor" aria-label="anchor" href="#context"></a>
 </h2>
-<blockquote>
 <p>The rooting-zone water-storage capacity—the amount of water accessible to plants—controls the sensitivity of land–atmosphere exchange of water and carbon during dry periods. How the rooting-zone water-storage capacity varies spatially is largely unknown and not directly observable. Here we estimate rooting-zone water-storage capacity globally from the relationship between remotely sensed vegetation activity, measured by combining evapotranspiration, sun-induced fluorescence and radiation estimates, and the cumulative water deficit calculated from daily time series of precipitation and evapotranspiration. Our findings indicate plant-available water stores that exceed the storage capacity of 2-m-deep soils across 37% of Earth’s vegetated surface. We find that biome-level variations of rooting-zone water-storage capacities correlate with observed rooting-zone depth distributions and reflect the influence of hydroclimate, as measured by the magnitude of annual cumulative water-deficit extremes. Smaller-scale variations are linked to topography and land use. Our findings document large spatial variations in the effective root-zone water-storage capacity and illustrate a tight link among the climatology of water deficits, rooting depth of vegetation and its sensitivity to water stress.</p>
-</blockquote>
 <p>The function included in this R package <code><a href="reference/cwd.html">cwd::cwd()</a></code> derives time series of the cumulative water deficit (CWD), given time series of the daily soil water balance (infiltration minus evapotranspiration). CWD “events” are identified as periods of consecutive days where the CWD is positive (a water deficit). CWD is set to zero after rain has reduced the CWD by a user-defined fraction, relative to maximum CWD attained during the same event.</p>
 </div>
 <div class="section level2">
@@ -100,7 +98,11 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>To install and load the <code>cwd</code> package using the latest release run the following command in your R terminal: ```r if(!require(devtools)){install.packages(devtools)} devtools::install_github(“geco-bern/cwd”) library(cwd)</p>
+<p>To install and load the <code>cwd</code> package using the latest release run the following command in your R terminal:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="va">devtools</span><span class="op">)</span><span class="op">}</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"geco-bern/cwd"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/geco-bern/cwd" class="external-link">cwd</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 
