@@ -35,7 +35,7 @@ df <- readRDS(file = paste0(here(), "/data/df_ch-lae.rds"))
 
 ## Convert ET to mass units
 
-Convert latent heat flux to evapotranspiration in energy units.
+Convert latent heat flux (W/m2) to evapotranspiration in mass units (mm/d).
 ```{r}
 df <- df |>
   mutate(et = cwd::convert_et(LE_F_MDS, TA_F_MDS, PA_F))
@@ -49,22 +49,32 @@ adf <- df |>
   summarise(et = sum(et), prec = sum(P_F))
 
 adf |>
-  ggplot(aes(x = year)) +
-  geom_line(aes(y = et), color = "tomato") +
-  geom_line(aes(y = prec), color = "royalblue")
+  tidyr::pivot_longer(cols = c(et, prec), names_to = "Flux") |> 
+  ggplot(aes(x = year, y = value, color = Flux)) +
+  geom_line() +
+  labs(y = "Flux (mm/yr)")
 ```
+Each year, ET is greater than precipitation. Hence, the water deficit will not continue accumulating over multiple years.
 
 ## Simulate snow
 
 Simulate snow accumulation and melt based on temperature and precipitation.
 ```{r}
 df <- df |>
-  mutate(prec = ifelse(TA_F_MDS < 1, 0, P_F),
-         snow = ifelse(TA_F_MDS < 1, P_F, 0)) |>
+  mutate(prec = ifelse(TA_F_MDS < 0, 0, P_F),
+         snow = ifelse(TA_F_MDS < 0, P_F, 0)) |>
   cwd::simulate_snow(varnam_prec = "prec", varnam_snow = "snow", varnam_temp = "TA_F_MDS")
 ```
 
-Define water balance liquid water to soil (rain plus snow melt) minus ET in mass units.
+Visualise snow mass equivalent time series.
+```{r}
+df |> 
+  ggplot(aes(TIMESTAMP, snow_pool)) + 
+  geom_line()
+```
+This looks like it's a lot of snow, actually. Maybe the melting rate is too slow.
+
+Define the daily water balance as liquid water infiltrating into soil (taken as rain plus snow melt) minus evapotranspiration - both in mass units, or equivalently in mm/d.
 ```{r}
 df <- df |>
   mutate(wbal = liquid_to_soil - et)
@@ -98,7 +108,6 @@ out_cwd <- cwd(df,
                thresh_drop = 0.0)
 ```
 
-
 Retain only events of a minimum length of 20 days.
 ```{r}
 out_cwd$inst <- out_cwd$inst |>
@@ -122,19 +131,18 @@ ggplot() +
 
 ## Extreme value statistics
 
-Get annual maxima
+Get annual maxima and fit a general extreme value distribution using the {extRemes} package.
 ```{r}
 vals <- out_cwd$inst %>%
   group_by(year(date_start)) %>%
   summarise(deficit = max(deficit, na.rm = TRUE)) %>%
   pull(deficit)
 
-# Fit general extreme value distribution
 evd_gev <- extRemes::fevd(x = vals, type = "GEV", method = "MLE", units = "years")
 summary(evd_gev)
 ```
 
-Get return levels for given return periods.
+Get CWD magnitudes for given return periods.
 ```{r}
 return_period <- c(2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 200, 250, 300, 500, 800)
 
@@ -146,11 +154,15 @@ df_return <- tibble(
   return_period = return_period,
   return_level = unname(c(return_level)),
   trans_period = -log( -log(1 - 1/return_period)) )
+
+df_return |> 
+  ggplot(aes(return_period, return_level)) +
+  geom_point() +
+  labs(x = "Return period (yr)", y = "Magnitude of annual CWD maximum (mm)")
 ```
 
+Visualise the estimated event size with a return period of $T = 80$ y on top of the distribution of cumulative water deficit events.
 ```{r}
-# visualise the estimated event size with a return period of $T = 20$ y on top
-# of the distribution of cumulative water deficit events.
 ggplot() +
   geom_histogram(
     data = out_cwd$inst,
@@ -161,7 +173,7 @@ ggplot() +
     ) +
   labs(x = "Cumulative water deficit (mm)") +
   geom_vline(xintercept = df_return %>%
-               dplyr::filter(return_period == 20) %>%
+               dplyr::filter(return_period == 80) %>%
                pull(return_level),
              col = "tomato")
 ```
