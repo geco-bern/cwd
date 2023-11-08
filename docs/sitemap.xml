@@ -7,15 +7,27 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>/articles/cwd_example.html</loc>
+  </url>
+  <url>
+    <loc>/articles/index.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/convert_et.html</loc>
+  </url>
+  <url>
     <loc>/reference/cwd.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simulate_snow.html</loc>
   </url>
 </urlset>

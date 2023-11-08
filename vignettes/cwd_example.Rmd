@@ -1,8 +1,12 @@
 ---
 title: "Example"
 author: "Beni Stocker"
-date: "2023-11-08"
-output: html_document
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{map2tidy functionality}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
@@ -128,8 +132,6 @@ vals <- out_cwd$inst %>%
 # Fit general extreme value distribution
 evd_gev <- extRemes::fevd(x = vals, type = "GEV", method = "MLE", units = "years")
 summary(evd_gev)
-
-plot(evd_gev)
 ```
 
 Get return levels for given return periods.

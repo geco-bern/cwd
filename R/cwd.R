@@ -17,7 +17,7 @@
 #' during the remainder of the event is set to missing values. This is to avoid interpreting data
 #' after rain events but before full compensation of CWD. Defaults to 0.9.
 #'
-#' @import dplyr
+#' @importFrom dplyr
 #'
 #' @details A list of two data frames (tibbles). \code{inst} contains information about CWD "events".
 #' Each row corresonds to one event. An event is defined as a period of consecutive days where the
@@ -38,7 +38,7 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
   # corresponds to mct2.R
 
   if (thresh_terminate > thresh_drop){
-    rlang::warn("Aborting. thresh_terminate must be smaller or equal thresh_drop. Setting it equal.")
+    warning("Aborting. thresh_terminate must be smaller or equal thresh_drop. Setting it equal.")
     thresh_terminate <- thresh_drop
   }
 
@@ -46,9 +46,8 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
   idx <- 0
   iinst <- 1
 
-  df <- df %>%
-    ungroup() %>%
-    # dplyr::select(date, !!varname_wbal) %>%
+  df <- df |>
+    ungroup() |>
     mutate(iinst = NA, dday = NA, deficit = 0)
 
   # search all dates
@@ -111,7 +110,7 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
 
       # record instance
       this_inst <- tibble( idx_start = idx, len = iidx_drop-idx, iinst = iinst, date_start=df[[varname_date]][idx], date_end = df[[varname_date]][iidx_drop-1], deficit = max_deficit )
-      inst <- inst %>% bind_rows(this_inst)
+      inst <- inst |> bind_rows(this_inst)
 
       # update
       iinst <- iinst + 1
