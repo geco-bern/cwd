@@ -13,7 +13,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r message=FALSE}
 library(readr)
 library(dplyr)
 library(here)
@@ -54,6 +54,7 @@ adf |>
   geom_line() +
   labs(y = "Flux (mm/yr)")
 ```
+
 Each year, ET is greater than precipitation. Hence, the water deficit will not continue accumulating over multiple years.
 
 ## Simulate snow
@@ -70,8 +71,10 @@ Visualise snow mass equivalent time series.
 ```{r}
 df |> 
   ggplot(aes(TIMESTAMP, snow_pool)) + 
-  geom_line()
+  geom_line() +
+  labs(x = "Date", "Snow mass equivalent (mm)")
 ```
+
 This looks like it's a lot of snow, actually. Maybe the melting rate is too slow.
 
 Define the daily water balance as liquid water infiltrating into soil (taken as rain plus snow melt) minus evapotranspiration - both in mass units, or equivalently in mm/d.
