@@ -164,12 +164,12 @@ df_return |>
   labs(x = "Return period (yr)", y = "Magnitude of annual CWD maximum (mm)")
 ```
 
-Visualise the estimated event size with a return period of $T = 80$ y on top of the distribution of cumulative water deficit events.
+Visualise the estimated event size with a return period of $T = 80$ y as the red line on top of the distribution of cumulative water deficit events.
 ```{r}
 ggplot() +
   geom_histogram(
     data = out_cwd$inst,
-    aes(x = deficit, y = ..density..),
+    aes(x = deficit, y = after_stat(density)),
     color = "black",
     position="identity",
     bins = 6
