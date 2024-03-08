@@ -161,7 +161,77 @@ df_return <- tibble(
 df_return |> 
   ggplot(aes(return_period, return_level)) +
   geom_point() +
-  labs(x = "Return period (yr)", y = "Magnitude of annual CWD maximum (mm)")
+  labs(x = "Return period (yr)", 
+       y = "Magnitude of annual CWD maximum (mm)",
+       title = "GEV")
+```
+
+With a Gumbel extreme value distribution, the return period as a function of the CWD extreme magnitude is calculated as follows:
+```{r}
+# Fit Gumbel distribution
+evd_gumbi <- extRemes::fevd(x = vals, type = "Gumbel", method = "MLE", units = "years")
+summary(evd_gumbi)
+
+# calculate return period as a function of the CWD extreme. Using the two 
+# coefficients of the fitted distribution as arguments
+calc_return_period <- function(x, loc, scale){
+  1 / (1 - exp(-exp(-(x-loc)/scale)))
+}
+
+extract_loc <- function(mod){
+  loc <- mod$results$par[ "location" ]
+  if (!is.null(loc)){
+    return(loc)
+  } else {
+    return(NA)
+  }
+}
+
+extract_scale <- function(mod){
+  scale <- mod$results$par[ "scale" ]
+  if (!is.null(scale)){
+    return(scale)
+  } else {
+    return(NA)
+  }
+}
+
+# demo return periods
+return_period <- c(2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 200, 250, 300, 500, 800)
+
+# use built-in function to get expected CWD extreme for given return periods 
+# (inverse of probability)
+return_level <- extRemes::return.level(
+  evd_gumbi,
+  return.period = return_period
+)
+
+# create data frame for visualisation
+df_return <- tibble(
+  return_period = return_period,
+  return_level = unname(c(return_level)),
+  trans_level = -log( -log(1 - 1/return_period))) |> 
+  mutate(myreturn_period = calc_return_period(
+    return_level,
+    extract_loc(evd_gumbi),
+    extract_scale(evd_gumbi)
+  ))
+
+# CWD extreme for a given return period
+df_return |> 
+  ggplot(aes(return_period, return_level)) +
+  geom_point() +
+  labs(x = "Return period (yr)", 
+       y = "Magnitude of annual CWD maximum (mm)",
+       title = "Gumbel")
+
+# Return period for a given CWD extreme (calculated based on function above)
+df_return |> 
+  ggplot(aes(return_level, myreturn_period)) + 
+  geom_point() +
+  labs(y = "Return period (yr)", 
+       x = "Magnitude of annual CWD maximum (mm)",
+       title = "Gumbel")
 ```
 
 Visualise the estimated event size with a return period of $T = 80$ y on top of the distribution of cumulative water deficit events.

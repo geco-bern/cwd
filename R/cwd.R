@@ -16,6 +16,7 @@
 #' @param thresh_drop Level, relative to the CWD maximum of the same event, after which all data
 #' during the remainder of the event is set to missing values. This is to avoid interpreting data
 #' after rain events but before full compensation of CWD. Defaults to 0.9.
+#' @param doy_reset Day-of-year (integer) when deficit is to be reset to zero each year.
 #'
 #' @importFrom dplyr
 #'
@@ -33,7 +34,7 @@
 #'
 #' @export
 #'
-cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_drop = 0.9){
+cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_drop = 0.9, doy_reset = NA){
 
   # corresponds to mct2.R
 
@@ -65,7 +66,10 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
       done_finding_dropday <- FALSE
 
       # continue accumulating deficit as long as the deficit has not fallen below (thresh_terminate) times the maximum deficit attained in this event
-      while (iidx <= (nrow(df)-1) && (deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit)){
+      while (iidx <= (nrow(df)-1) &&
+             (deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit)
+             ){
+
         dday <- dday + 1
         deficit <- deficit - df[[ varname_wbal ]][iidx]
 
