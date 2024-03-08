@@ -234,12 +234,12 @@ df_return |>
        title = "Gumbel")
 ```
 
-Visualise the estimated event size with a return period of $T = 80$ y on top of the distribution of cumulative water deficit events.
+Visualise the estimated event size with a return period of $T = 80$ y as the red line on top of the distribution of cumulative water deficit events.
 ```{r}
 ggplot() +
   geom_histogram(
     data = out_cwd$inst,
-    aes(x = deficit, y = ..density..),
+    aes(x = deficit, y = after_stat(density)),
     color = "black",
     position="identity",
     bins = 6
@@ -249,4 +249,38 @@ ggplot() +
                dplyr::filter(return_period == 80) %>%
                pull(return_level),
              col = "tomato")
+```
+
+## Time stepping
+
+The data frame used above contains time series with daily resolution. The CWD algorithm can also be applied to data provided at other time steps. It primarily acts on the *rows* in the data frame.
+```{r}
+wdf <- df |> 
+  mutate(year = lubridate::year(TIMESTAMP),
+         week = lubridate::week(TIMESTAMP)) |> 
+  group_by(year, week) |> 
+  summarise(wbal = sum(wbal, na.rm = FALSE)) |> 
+  
+  # create a date object again, considering the first day of the week
+  mutate(date = lubridate::ymd(paste0(year, "-01-01")) + lubridate::weeks(week-1))
+
+out_cwd_weekly <- cwd(wdf,
+               varname_wbal = "wbal",
+               varname_date = "date",
+               thresh_terminate = 0.0,
+               thresh_drop = 0.0)
+```
+
+Plot weekly CWD time series.
+```{r}
+ggplot() +
+  geom_rect(
+    data = out_cwd_weekly$inst,
+    aes(xmin = date_start, xmax = date_end, ymin = -99, ymax = 99999),
+    fill = rgb(0,0,0,0.3),
+    color = NA) +
+  geom_line(data  =  out_cwd_weekly$df, aes(date, deficit), color = "tomato") +
+  coord_cartesian(ylim = c(0, 200)) +
+  theme_classic() +
+  labs(x = "Date", y = "Cumulative water deficit (mm)")
 ```

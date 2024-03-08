@@ -113,8 +113,15 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
       }
 
       # record instance
-      this_inst <- tibble( idx_start = idx, len = iidx_drop-idx, iinst = iinst, date_start=df[[varname_date]][idx], date_end = df[[varname_date]][iidx_drop-1], deficit = max_deficit )
-      inst <- inst |> bind_rows(this_inst)
+      this_inst <- tibble( idx_start = idx,
+                           len = iidx_drop-idx,
+                           iinst = iinst,
+                           date_start = df[[varname_date]][idx],
+                           date_end = df[[varname_date]][iidx_drop-1],
+                           deficit = max_deficit
+                           )
+      inst <- inst |>
+        bind_rows(this_inst)
 
       # update
       iinst <- iinst + 1
