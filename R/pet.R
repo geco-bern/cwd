@@ -1,20 +1,32 @@
-#' Water energy to mass conversion
+#' Priestley-Taylor potential evapotranspiration
 #'
-#' Convert the latent heat flux into evapotranspiration in (water) mass units.
-#' Based on the SPLASH model (Davis et al. 2017 http://www.geosci-model-dev.net/10/689/2017/)
+#' Calculates the potential evapotranspiration using the implementation by
+#' Davis et al (2017), based on Priestley & Taylor (1972)
 #'
-#' @param et_e Latent heat flux in energy units (W m-2; representative for the
-#' mean value over one time step)
+#' @param netrad Net radiation (W m-2)
 #' @param tc Air temperature in degrees Celsius
 #' @param patm Atmospheric pressure (Pa)
 #' @param return_df A logical specifying whether to return a data frame with a
-#' single column containing the water mass flux. Defaults to \code{FALSE}
+#' single column containing potential evapotranspiration. Defaults to \code{FALSE}
 #'
-#' @details Returns the water mass flux in mm d-1 (equivalent to kg m-2)
+#' @details Potential evapotranspiration (mm s-1)
+#'
+#' @references
+#' Davis, T. W., Prentice, I. C., Stocker, B. D., Thomas, R. T., Whitley, R. J.,
+#' Wang, H., Evans, B. J., Gallego-Sala, A. V., Sykes, M. T., & Cramer, W.
+#' (2017). Simple process-led algorithms for simulating habitats (SPLASH v.1.0):
+#' Robust indices of radiation, evapotranspiration and plant-available moisture.
+#' Geoscientific Model Development, 10(2), 689–708.
+#' https://doi.org/10.5194/gmd-10-689-2017
+#'
+#' Priestley, C. H. B., & Taylor, R. J. (1972). On the Assessment of Surface
+#' Heat Flux and Evaporation Using Large-Scale Parameters. Monthly Weather
+#' Review, 100(2), 81–92. https://doi.org/10.1175/1520-0493
+#'
 #'
 #' @export
 #'
-convert_et <- function(et_e, tc, patm, return_df = FALSE){
+pet <- function(netrad, tc, patm, return_df = FALSE){
 
   par_splash <- list(
 		kTkelvin = 273.15,  # freezing point in K (= 0 deg C)
@@ -29,26 +41,29 @@ convert_et <- function(et_e, tc, patm, return_df = FALSE){
 		k_karman = 0.41,    # Von Karman constant; from bigleaf R package
 		eps = 9.999e-6,     # numerical imprecision allowed in mass conservation tests
 		cp = 1004.834,      # specific heat of air for constant pressure (J K-1 kg-1); from bigleaf R package
-		Rd = 287.0586       # gas constant of dry air (J kg-1 K-1) (Foken 2008 p. 245; from bigleaf R package)
+		Rd = 287.0586,      # gas constant of dry air (J kg-1 K-1) (Foken 2008 p. 245; from bigleaf R package)
+		alpha = 1.26        # Priestly-Taylor coefficient, = 1 + omega, with omega being the entrainment factor, Eq. (22) in Davis et al.
 		)
 
   sat_slope <- calc_sat_slope(tc)
   lv <- calc_enthalpy_vap(tc)
   pw <- calc_density_h2o(tc, patm)
   gamma <- calc_psychro(tc, patm, par_splash)
-  econ <- sat_slope / (lv * pw * (sat_slope + gamma))
+  econ <- sat_slope / (lv * pw * (sat_slope + gamma))  # units: m3 J−1
 
-  ## J m-2 d-1 -> mm / d
-  et_mm <- et_e * econ * 60 * 60 * 24 * 1000
+  # equilibrium evapotranspiration in mm s-1
+  eet <- netrad * econ * 1000
+
+  # Priestley-Taylor potential evapotranspiration
+  pet <- par_splash$alpha * eet
 
   if (return_df){
-    return(tibble(et_mm = et_mm))
+    return(tibble(pet = pet))
   } else {
-    return(et_mm)
+    return(pet)
   }
 
 }
-
 
 calc_patm <- function( elv, par ){
   #----------------------------------------------------------------
@@ -88,83 +103,6 @@ calc_sat_slope <- function( tc ){
 	return( sat_slope )
 
 }
-
-
-calc_enthalpy_vap <- function( tc ){
-  #----------------------------------------------------------------
-  # Calculates the enthalpy of vaporization, J/kg
-  # Ref:      Eq. 8, Henderson-Sellers (1984)
-  #----------------------------------------------------------------
-  # # arguments
-  # real, intent(in) :: tc # air temperature, degrees C
-
-  # # function return value
-  # real ::  enthalpy_vap # enthalpy of vaporization, J/kg
-
-  enthalpy_vap <- 1.91846e6*((tc + 273.15)/(tc + 273.15 - 33.91))^2
-
-  return( enthalpy_vap )
-
-}
-
-
-calc_density_h2o <- function( tc, press ){
-  #----------------------------------------------------------------
-  # Calculates density of water at a given temperature and pressure
-  # Ref: Chen et al. (1977)
-  #----------------------------------------------------------------
-  # # arguments
-  # real, intent(in) :: tc     # air temperature (degrees C)
-  # real, intent(in) :: press  # atmospheric pressure (Pa)
-
-  # # local variables
-  # real :: po, ko, ca, cb
-  # real :: pbar               # atmospheric pressure (bar)
-
-  # # function return value
-  # real :: density_h2o  # density of water, kg/m^3
-
-  # Calculate density at 1 atm:
-  po <- 0.99983952
-	  + 6.788260e-5  *tc
-	  - 9.08659e-6   *tc*tc
-	  + 1.022130e-7  *tc*tc*tc
-	  - 1.35439e-9   *tc*tc*tc*tc
-	  + 1.471150e-11 *tc*tc*tc*tc*tc
-	  - 1.11663e-13  *tc*tc*tc*tc*tc*tc
-	  + 5.044070e-16 *tc*tc*tc*tc*tc*tc*tc
-	  - 1.00659e-18  *tc*tc*tc*tc*tc*tc*tc*tc
-
-  # Calculate bulk modulus at 1 atm:
-  ko <- 19652.17
-	  + 148.1830   *tc
-	  - 2.29995    *tc*tc
-	  + 0.01281    *tc*tc*tc
-	  - 4.91564e-5 *tc*tc*tc*tc
-	  + 1.035530e-7*tc*tc*tc*tc*tc
-
-  # Calculate temperature dependent coefficients:
-  ca <- 3.26138
-	  + 5.223e-4  *tc
-	  + 1.324e-4  *tc*tc
-	  - 7.655e-7  *tc*tc*tc
-	  + 8.584e-10 *tc*tc*tc*tc
-
-  cb <- 7.2061e-5
-	  - 5.8948e-6  *tc
-	  + 8.69900e-8 *tc*tc
-	  - 1.0100e-9  *tc*tc*tc
-	  + 4.3220e-12 *tc*tc*tc*tc
-
-  # Convert atmospheric pressure to bar (1 bar <- 100000 Pa)
-  pbar <- (1.0e-5)*press
-
-  density_h2o <- 1000.0*po*(ko + ca*pbar + cb*pbar^2.0)/(ko + ca*pbar + cb*pbar^2.0 - pbar)
-
-  return(density_h2o)
-
-}
-
 
 calc_psychro <- function( tc, press, par_splash ){
   #----------------------------------------------------------------
