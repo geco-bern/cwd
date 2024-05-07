@@ -1,10 +1,10 @@
 ---
-title: "Example"
+title: "Cumulative water deficit example"
 author: "Beni Stocker"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{map2tidy functionality}
+  %\VignetteIndexEntry{CWD example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -45,10 +45,6 @@ le_to_et <- function(le, tc, patm){
 
 df <- df |>
   mutate(et = le_to_et(LE_F_MDS, TA_F_MDS, PA_F))
-
-df |> 
-  ggplot(aes(et_bigleaf, et)) +
-  geom_point()
 ```
 
 Check annual totals.
