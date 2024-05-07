@@ -37,6 +37,8 @@ df <- readRDS(file = paste0(here(), "/data/df_fr-pue.rds"))
 
 ... and convert from units of mm s-1 to mm d-1.
 ```{r}
+# tested: identical results are obtained with:
+# bigleaf::potential.ET(Tair = TA_F_MDS, pressure = PA_F*1e-3, Rn = NETRAD, approach = "Priestley-Taylor")$ET_pot * 30 * 30 * 24
 df <- df |> 
   mutate(pet = 30 * 30 * 24 * pet(NETRAD, TA_F_MDS, PA_F))
 ```
