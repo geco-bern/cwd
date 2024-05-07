@@ -19,6 +19,12 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/reference/calc_density_h2o.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calc_enthalpy_vap.html</loc>
+  </url>
+  <url>
     <loc>/reference/convert_et.html</loc>
   </url>
   <url>
@@ -26,6 +32,9 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/pet.html</loc>
   </url>
   <url>
     <loc>/reference/simulate_snow.html</loc>

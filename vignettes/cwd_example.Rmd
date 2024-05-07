@@ -37,8 +37,12 @@ df <- readRDS(file = paste0(here(), "/data/df_ch-lae.rds"))
 
 Convert latent heat flux (W/m2) to evapotranspiration in mass units (mm/d).
 ```{r}
+le_to_et <- function(le, tc, patm){
+  1000 * 30 * 30 * 24 * le / (cwd::calc_enthalpy_vap(tc) * cwd::calc_density_h2o(tc, patm))
+}
+
 df <- df |>
-  mutate(et = cwd::convert_et(LE_F_MDS, TA_F_MDS, PA_F))
+  mutate(et = le_to_et(LE_F_MDS, TA_F_MDS, PA_F))
 ```
 
 Check annual totals.
