@@ -10,19 +10,28 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
+    <loc>/articles/potential_cwd.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/reference/convert_et.html</loc>
+    <loc>/reference/calc_density_h2o.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calc_enthalpy_vap.html</loc>
   </url>
   <url>
     <loc>/reference/cwd.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/pet.html</loc>
   </url>
   <url>
     <loc>/reference/simulate_snow.html</loc>

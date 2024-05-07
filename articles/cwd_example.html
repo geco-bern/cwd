@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Example • cwd</title>
+<title>Cumulative water deficit example • cwd</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="/apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,700;1,300;1,400&amp;display=swap" rel="stylesheet">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><!-- geco --><link href="../geco.css" rel="stylesheet">
-<meta property="og:title" content="Example">
+<meta property="og:title" content="Cumulative water deficit example">
 <meta property="og:description" content="cwd">
 <meta name="twitter:card" content="summary">
 <!-- Mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js" async integrity="sha256-nlrDrBTHxJJlDDX22AS33xYI1OJHnGMDhiYMSe2U0e0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/config/TeX-AMS-MML_HTMLorMML.js" async integrity="sha256-4zys9A4hMQmtq2EUL+JRoXc0NZi8jVJMzb8onewOaSQ=" crossorigin="anonymous"></script>
@@ -63,7 +63,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/cwd_example.html">Example</a>
+      <a href="../articles/cwd_example.html">Cumulative water deficit example</a>
+    </li>
+    <li>
+      <a href="../articles/potential_cwd.html">Potential cumulative water deficit</a>
     </li>
   </ul>
 </li>
@@ -86,11 +89,11 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Example</h1>
+      <h1 data-toc-skip>Cumulative water deficit example</h1>
                         <h4 data-toc-skip class="author">Beni
 Stocker</h4>
             
-            <h4 data-toc-skip class="date">2024-03-08</h4>
+            <h4 data-toc-skip class="date">2024-05-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/HEAD/vignettes/cwd_example.Rmd" class="external-link"><code>vignettes/cwd_example.Rmd</code></a></small>
       <div class="hidden name"><code>cwd_example.Rmd</code></div>
@@ -124,8 +127,14 @@ annual maxima of the CWD time series.</p>
 <p>Convert latent heat flux (W/m2) to evapotranspiration in mass units
 (mm/d).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>et <span class="op">=</span> <span class="fu">cwd</span><span class="fu">::</span><span class="fu"><a href="../reference/convert_et.html">convert_et</a></span><span class="op">(</span><span class="va">LE_F_MDS</span>, <span class="va">TA_F_MDS</span>, <span class="va">PA_F</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># tested: identical results are obtained with:</span></span>
+<span><span class="co"># bigleaf::LE.to.ET(LE_F_MDS, TA_F_MDS)* 30 * 30 * 24</span></span>
+<span><span class="va">le_to_et</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">le</span>, <span class="va">tc</span>, <span class="va">patm</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="fl">1000</span> <span class="op">*</span> <span class="fl">30</span> <span class="op">*</span> <span class="fl">30</span> <span class="op">*</span> <span class="fl">24</span> <span class="op">*</span> <span class="va">le</span> <span class="op">/</span> <span class="op">(</span><span class="fu">cwd</span><span class="fu">::</span><span class="fu"><a href="../reference/calc_enthalpy_vap.html">calc_enthalpy_vap</a></span><span class="op">(</span><span class="va">tc</span><span class="op">)</span> <span class="op">*</span> <span class="fu">cwd</span><span class="fu">::</span><span class="fu"><a href="../reference/calc_density_h2o.html">calc_density_h2o</a></span><span class="op">(</span><span class="va">tc</span>, <span class="va">patm</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>et <span class="op">=</span> <span class="fu">le_to_et</span><span class="op">(</span><span class="va">LE_F_MDS</span>, <span class="va">TA_F_MDS</span>, <span class="va">PA_F</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Check annual totals.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">adf</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span></span>
@@ -208,7 +217,7 @@ units, or equivalently in mm/d.</p>
 <span>    color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>data  <span class="op">=</span>  <span class="va">out_cwd</span><span class="op">$</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">TIMESTAMP</span>, <span class="va">prec</span><span class="op">)</span>, size  <span class="op">=</span>  <span class="fl">0.3</span>, color <span class="op">=</span> <span class="st">"royalblue"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>data  <span class="op">=</span>  <span class="va">out_cwd</span><span class="op">$</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">TIMESTAMP</span>, <span class="va">deficit</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"tomato"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Date"</span>, y <span class="op">=</span> <span class="st">"Cumulative water deficit (mm)"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
@@ -237,26 +246,26 @@ the {extRemes} package.</p>
 <span><span class="co">## [1] "Estimation Method used: MLE"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##  Negative Log-Likelihood Value:  49.54513 </span></span>
+<span><span class="co">##  Negative Log-Likelihood Value:  14.42472 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  Estimated parameters:</span></span>
-<span><span class="co">##   location      scale      shape </span></span>
-<span><span class="co">## 84.6508077 36.6445511 -0.4138389 </span></span>
+<span><span class="co">##  location     scale     shape </span></span>
+<span><span class="co">## 2.8327283 1.2597365 0.4493853 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  Standard Error Estimates:</span></span>
-<span><span class="co">##   location      scale      shape </span></span>
-<span><span class="co">## 13.2419143 10.3164770  0.2916536 </span></span>
+<span><span class="co">##  location     scale     shape </span></span>
+<span><span class="co">## 0.5721040 0.5288677 0.4494756 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  Estimated parameter covariance matrix.</span></span>
-<span><span class="co">##            location      scale       shape</span></span>
-<span><span class="co">## location 175.348294  -1.869928 -1.80581691</span></span>
-<span><span class="co">## scale     -1.869928 106.429698 -2.10399737</span></span>
-<span><span class="co">## shape     -1.805817  -2.103997  0.08506182</span></span>
+<span><span class="co">##            location       scale       shape</span></span>
+<span><span class="co">## location  0.3273030  0.22416425 -0.09604260</span></span>
+<span><span class="co">## scale     0.2241642  0.27970099 -0.01975061</span></span>
+<span><span class="co">## shape    -0.0960426 -0.01975061  0.20202829</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##  AIC = 105.0903 </span></span>
+<span><span class="co">##  AIC = 34.84944 </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##  BIC = 105.998</span></span></code></pre>
+<span><span class="co">##  BIC = 34.68717</span></span></code></pre>
 <p>Get CWD magnitudes for given return periods.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">return_period</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="fl">40</span>, <span class="fl">50</span>, <span class="fl">60</span>, <span class="fl">70</span>, <span class="fl">80</span>, <span class="fl">90</span>, <span class="fl">100</span>, <span class="fl">120</span>, <span class="fl">200</span>, <span class="fl">250</span>, <span class="fl">300</span>, <span class="fl">500</span>, <span class="fl">800</span><span class="op">)</span></span>
@@ -289,25 +298,25 @@ function of the CWD extreme magnitude is calculated as follows:</p>
 <span><span class="co">## [1] "Estimation Method used: MLE"</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##  Negative Log-Likelihood Value:  50.24791 </span></span>
+<span><span class="co">##  Negative Log-Likelihood Value:  15.12919 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  Estimated parameters:</span></span>
 <span><span class="co">## location    scale </span></span>
-<span><span class="co">## 77.24774 32.57314 </span></span>
+<span><span class="co">## 3.175193 1.655633 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  Standard Error Estimates:</span></span>
 <span><span class="co">##  location     scale </span></span>
-<span><span class="co">## 10.918332  7.906045 </span></span>
+<span><span class="co">## 0.6523281 0.5372526 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  Estimated parameter covariance matrix.</span></span>
-<span><span class="co">##           location    scale</span></span>
-<span><span class="co">## location 119.20997 28.79761</span></span>
-<span><span class="co">## scale     28.79761 62.50554</span></span>
+<span><span class="co">##            location      scale</span></span>
+<span><span class="co">## location 0.42553194 0.09896707</span></span>
+<span><span class="co">## scale    0.09896707 0.28864031</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##  AIC = 104.4958 </span></span>
+<span><span class="co">##  AIC = 34.25838 </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##  BIC = 105.101</span></span></code></pre>
+<span><span class="co">##  BIC = 34.1502</span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate return period as a function of the CWD extreme. Using the two </span></span>
 <span><span class="co"># coefficients of the fitted distribution as arguments</span></span>
@@ -421,7 +430,7 @@ steps. It primarily acts on the <em>rows</em> in the data frame.</p>
 <span>    fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0.3</span><span class="op">)</span>,</span>
 <span>    color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>data  <span class="op">=</span>  <span class="va">out_cwd_weekly</span><span class="op">$</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">deficit</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"tomato"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Date"</span>, y <span class="op">=</span> <span class="st">"Cumulative water deficit (mm)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="cwd_example_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>

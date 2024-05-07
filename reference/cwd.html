@@ -41,7 +41,10 @@ maximum CWD attained during the same event.'><meta name="twitter:card" content="
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/cwd_example.html">Example</a>
+      <a href="../articles/cwd_example.html">Cumulative water deficit example</a>
+    </li>
+    <li>
+      <a href="../articles/potential_cwd.html">Potential cumulative water deficit</a>
     </li>
   </ul></li>
         <li>
@@ -73,7 +76,14 @@ maximum CWD attained during the same event.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cwd</span><span class="op">(</span><span class="va">df</span>, <span class="va">varname_wbal</span>, <span class="va">varname_date</span>, thresh_terminate <span class="op">=</span> <span class="fl">0</span>, thresh_drop <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cwd</span><span class="op">(</span></span>
+<span>  <span class="va">df</span>,</span>
+<span>  <span class="va">varname_wbal</span>,</span>
+<span>  <span class="va">varname_date</span>,</span>
+<span>  thresh_terminate <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  thresh_drop <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  doy_reset <span class="op">=</span> <span class="cn">NA</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -101,6 +111,10 @@ a CWD event.</p></dd>
 <dd><p>Level, relative to the CWD maximum of the same event, after which all data
 during the remainder of the event is set to missing values. This is to avoid interpreting data
 after rain events but before full compensation of CWD. Defaults to 0.9.</p></dd>
+
+
+<dt>doy_reset</dt>
+<dd><p>Day-of-year (integer) when deficit is to be reset to zero each year.</p></dd>
 
 </dl></div>
     <div id="details">

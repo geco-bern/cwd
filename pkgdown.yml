@@ -1,7 +1,8 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
   cwd_example: cwd_example.html
-last_built: 2024-03-08T11:55Z
+  potential_cwd: potential_cwd.html
+last_built: 2024-05-07T13:32Z
 
