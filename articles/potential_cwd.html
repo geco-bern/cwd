@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">Beni
 Stocker</h4>
             
-            <h4 data-toc-skip class="date">2024-05-07</h4>
+            <h4 data-toc-skip class="date">2024-05-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/HEAD/vignettes/potential_cwd.Rmd" class="external-link"><code>vignettes/potential_cwd.Rmd</code></a></small>
       <div class="hidden name"><code>potential_cwd.Rmd</code></div>
@@ -129,7 +129,9 @@ repository.</p>
 </h2>
 <p>… and convert from units of mm s-1 to mm d-1.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="co"># tested: identical results are obtained with:</span></span>
+<span><span class="co"># bigleaf::potential.ET(Tair = TA_F_MDS, pressure = PA_F*1e-3, Rn = NETRAD, approach = "Priestley-Taylor")$ET_pot * 30 * 30 * 24</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pet <span class="op">=</span> <span class="fl">30</span> <span class="op">*</span> <span class="fl">30</span> <span class="op">*</span> <span class="fl">24</span> <span class="op">*</span> <span class="fu"><a href="../reference/pet.html">pet</a></span><span class="op">(</span><span class="va">NETRAD</span>, <span class="va">TA_F_MDS</span>, <span class="va">PA_F</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
