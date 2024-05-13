@@ -174,13 +174,13 @@ mdf_mean |>
   theme_classic()
 ```
 
-Therefore, we re-set the cumulation of the water deficit each year in November.
+Therefore, we re-set the accumulation of the water deficit each year on the first day after November (in other words, 1st of December)
 ```{r}
 # determine the day-of-year of the first day of the month after the wettest month
 doy_reset <- lubridate::yday(lubridate::ymd("2000-11-01") + lubridate::dmonths(1))
 ```
 
-Get potential CWD and events.
+Get the potential cumulative water deficit time series and individual *events*. Note that we use the argument `doy_reset` here to force a re-setting of the potential cumulative water deficit on that same day each year.
 ```{r}
 df <- df |> 
   mutate(pwbal = P_F - pet)
@@ -201,7 +201,7 @@ out_cwd$inst <- out_cwd$inst |>
   filter(len >= 20)
 ```
 
-Plot CWD time series.
+Plot the potential cumulative water deficit time series and events.
 ```{r}
 ggplot() +
   geom_rect(
