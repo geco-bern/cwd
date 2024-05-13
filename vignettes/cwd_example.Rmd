@@ -110,11 +110,13 @@ gg5 / gg6 / gg7
 
 Get CWD and events.
 ```{r}
-out_cwd <- cwd(df,
-               varname_wbal = "wbal",
-               varname_date = "TIMESTAMP",
-               thresh_terminate = 0.0,
-               thresh_drop = 0.0)
+out_cwd <- cwd(
+  df,
+  varname_wbal = "wbal",
+  varname_date = "TIMESTAMP",
+  thresh_terminate = 0.0,
+  thresh_drop = 0.0
+  )
 ```
 
 Retain only events of a minimum length of 20 days.

@@ -10,7 +10,7 @@ cwd(
   varname_date,
   thresh_terminate = 0,
   thresh_drop = 0.9,
-  doy_reset = NA
+  doy_reset = 999
 )
 }
 \arguments{
