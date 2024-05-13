@@ -34,7 +34,7 @@
 #'
 #' @export
 #'
-cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_drop = 0.9, doy_reset = NA){
+cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_drop = 0.9, doy_reset = 999){
 
   # corresponds to mct2.R
 
@@ -42,6 +42,9 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
     warning("Aborting. thresh_terminate must be smaller or equal thresh_drop. Setting it equal.")
     thresh_terminate <- thresh_drop
   }
+
+  # create day-of-year column
+  df$doy <- lubridate::yday(df[[ varname_date ]])
 
   inst <- tibble()
   idx <- 0
@@ -66,8 +69,10 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
       done_finding_dropday <- FALSE
 
       # continue accumulating deficit as long as the deficit has not fallen below (thresh_terminate) times the maximum deficit attained in this event
-      while (iidx <= (nrow(df)-1) &&
-             (deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit)
+      # optionally
+      while (iidx <= (nrow(df)-1) &&  # avoid going over row length
+             (deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit) &&
+             df$doy[iidx] < doy_reset
              ){
 
         dday <- dday + 1
