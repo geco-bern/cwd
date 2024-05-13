@@ -93,7 +93,7 @@
                         <h4 data-toc-skip class="author">Beni
 Stocker</h4>
             
-            <h4 data-toc-skip class="date">2024-05-08</h4>
+            <h4 data-toc-skip class="date">2024-05-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/HEAD/vignettes/cwd_example.Rmd" class="external-link"><code>vignettes/cwd_example.Rmd</code></a></small>
       <div class="hidden name"><code>cwd_example.Rmd</code></div>
@@ -198,11 +198,13 @@ units, or equivalently in mm/d.</p>
 </h2>
 <p>Get CWD and events.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out_cwd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cwd.html">cwd</a></span><span class="op">(</span><span class="va">df</span>,</span>
-<span>               varname_wbal <span class="op">=</span> <span class="st">"wbal"</span>,</span>
-<span>               varname_date <span class="op">=</span> <span class="st">"TIMESTAMP"</span>,</span>
-<span>               thresh_terminate <span class="op">=</span> <span class="fl">0.0</span>,</span>
-<span>               thresh_drop <span class="op">=</span> <span class="fl">0.0</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">out_cwd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cwd.html">cwd</a></span><span class="op">(</span></span>
+<span>  <span class="va">df</span>,</span>
+<span>  varname_wbal <span class="op">=</span> <span class="st">"wbal"</span>,</span>
+<span>  varname_date <span class="op">=</span> <span class="st">"TIMESTAMP"</span>,</span>
+<span>  thresh_terminate <span class="op">=</span> <span class="fl">0.0</span>,</span>
+<span>  thresh_drop <span class="op">=</span> <span class="fl">0.0</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p>Retain only events of a minimum length of 20 days.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span> <span class="op">&lt;-</span> <span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span> <span class="op">|&gt;</span></span>
