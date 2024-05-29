@@ -1,30 +1,8 @@
-#' Simulate snow mass
-#'
-#' Simulate snow mass accumulation and melt based on Orth et al. (2013)
-#' https://www.jstor.org/stable/24914341
-#'
-#' @param df A data frame containing columns for air temperature (deg. C),
-#' precipitation in liquid form (rain, mm d-1), and precipitation in solid form
-#' (snow water equivalents, mm d-1). The column names of the respective
-#' variables are provided by the other arguments.
-#' @param varnam_temp A character string specifying the variable name for air
-#' temperature.
-#' @param varnam_prec A character string specifying the variable name for rain.
-#' @param varnam_snow A character string specifying the variable name for snow.
-#'
-#' @importFrom dplyr
+simulate_snow <- function(df){
 
-#' @details Returns a data frame with two added columns: (1) \code{liquid_to_soil}
-#' is the rain plus snow melt in mm d-1; (2) \code{snow_pool} is the snow mass
-#' in water equivalents (mm) for each day.
-#'
-#' @export
-#'
-simulate_snow <- function(df, varnam_temp, varnam_prec, varnam_snow){
-
-  temp <- df |> dplyr::pull(!!varnam_temp)
-  prec <- df |> dplyr::pull(!!varnam_prec)
-  snow <- df |> dplyr::pull(!!varnam_snow)
+  temp <- df$temp
+  prec <- df$prec
+  snow <- df$snow
 
   ## fixed parameters
   temp_threshold <- 1.0

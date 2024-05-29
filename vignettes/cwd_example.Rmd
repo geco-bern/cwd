@@ -201,7 +201,7 @@ out_cwd_weekly <- cwd(wdf,
                thresh_drop = 0.0)
 ```
 
-Plot weekly CWD time series.
+Plot weekly CWD time series in green (Daily CWD time series are plotted by the red line.)
 ```{r}
 ggplot() +
   geom_rect(
@@ -209,8 +209,10 @@ ggplot() +
     aes(xmin = date_start, xmax = date_end, ymin = -99, ymax = 99999),
     fill = rgb(0,0,0,0.3),
     color = NA) +
-  geom_line(data  =  out_cwd_weekly$df, aes(date, deficit), color = "tomato") +
+  geom_line(data  =  out_cwd$df, aes(TIMESTAMP, deficit), color = "tomato", alpha = 0.6) +
+  geom_line(data  =  out_cwd_weekly$df, aes(date, deficit), color = "springgreen4") +
   coord_cartesian(ylim = c(0, 200)) +
   theme_classic() +
   labs(x = "Date", y = "Cumulative water deficit (mm)")
 ```
+
