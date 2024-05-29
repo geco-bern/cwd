@@ -38,9 +38,9 @@ df <- readRDS(file = paste0(here(), "/data/df_ch-lae.rds"))
 Convert latent heat flux (W/m2) to evapotranspiration in mass units (mm/d).
 ```{r}
 # tested: identical results are obtained with:
-# bigleaf::LE.to.ET(LE_F_MDS, TA_F_MDS)* 30 * 30 * 24
+# bigleaf::LE.to.ET(LE_F_MDS, TA_F_MDS)* 60 * 60 * 24
 le_to_et <- function(le, tc, patm){
-  1000 * 30 * 30 * 24 * le / (cwd::calc_enthalpy_vap(tc) * cwd::calc_density_h2o(tc, patm))
+  1000 * 60 * 60 * 24 * le / (cwd::calc_enthalpy_vap(tc) * cwd::calc_density_h2o(tc, patm))
 }
 
 df <- df |>
@@ -135,7 +135,7 @@ ggplot() +
     color = NA) +
   geom_line(data  =  out_cwd$df, aes(TIMESTAMP, prec), size  =  0.3, color = "royalblue") +
   geom_line(data  =  out_cwd$df, aes(TIMESTAMP, deficit), color = "tomato") +
-  coord_cartesian(ylim = c(0, 60)) +
+  coord_cartesian(ylim = c(0, 170)) +
   theme_classic() +
   labs(x = "Date", y = "Cumulative water deficit (mm)")
 ```
@@ -289,7 +289,7 @@ ggplot() +
     color = NA) +
   geom_line(data  =  out_cwd$df, aes(TIMESTAMP, deficit), color = "tomato", alpha = 0.6) +
   geom_line(data  =  out_cwd_weekly$df, aes(date, deficit), color = "springgreen4") +
-  coord_cartesian(ylim = c(0, 200)) +
+  coord_cartesian(ylim = c(0, 170)) +
   theme_classic() +
   labs(x = "Date", y = "Cumulative water deficit (mm)")
 ```
