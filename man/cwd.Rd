@@ -4,7 +4,14 @@
 \alias{cwd}
 \title{Cumulative water deficit}
 \usage{
-cwd(df, varname_wbal, varname_date, thresh_terminate = 0, thresh_drop = 0.9)
+cwd(
+  df,
+  varname_wbal,
+  varname_date,
+  thresh_terminate = 0,
+  thresh_drop = 0.9,
+  doy_reset = 999
+)
 }
 \arguments{
 \item{df}{a data frame that contains the variable named according to argument \code{varname_wbal}}
@@ -21,6 +28,8 @@ a CWD event.}
 \item{thresh_drop}{Level, relative to the CWD maximum of the same event, after which all data
 during the remainder of the event is set to missing values. This is to avoid interpreting data
 after rain events but before full compensation of CWD. Defaults to 0.9.}
+
+\item{doy_reset}{Day-of-year (integer) when deficit is to be reset to zero each year.}
 }
 \description{
 Derives time series of the cumulative water deficit (CWD), given time series of
