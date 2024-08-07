@@ -69,8 +69,7 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
       # continue accumulating deficit as long as the deficit has not fallen below (thresh_terminate) times the maximum deficit attained in this event
       # optionally
       while (iidx <= (nrow(df)-1) &&  # avoid going over row length
-             (deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit) &&
-             df$doy[iidx] < doy_reset
+             (deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit)
              ){
 
         dday <- dday + 1
@@ -86,6 +85,13 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
         if (deficit < (max_deficit * thresh_drop) && !done_finding_dropday){
           iidx_drop <- iidx
           done_finding_dropday <- TRUE
+        }
+
+        # stop accumulating on re-set day
+        if (df$doy[iidx] == doy_reset){
+          iidx_drop <- iidx
+          max_deficit <- deficit
+          break
         }
 
         # once, deficit has fallen below threshold, all subsequent dates are dropped (dday set to NA)
