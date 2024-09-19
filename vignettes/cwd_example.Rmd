@@ -30,7 +30,9 @@ This demonstrates the workflow for determining cumulative water deficit (CWD) ti
 
 Read data from the file contained in this repository.
 ```{r}
-df <- readRDS(file = paste0(here(), "/data/df_ch-lae.rds"))
+df <- readRDS(file = paste0(here(), "/data/df_ch-lae.rds")) |> 
+  # convert to from kPA to Pa (SI units are used for inputs to functions in the package)
+  mutate(PA_F = 1e3 * PA_F)
 ```
 
 ## Convert ET to mass units
