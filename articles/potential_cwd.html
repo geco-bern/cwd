@@ -91,7 +91,7 @@
                         <h4 data-toc-skip class="author">Beni
 Stocker</h4>
             
-            <h4 data-toc-skip class="date">2024-08-07</h4>
+            <h4 data-toc-skip class="date">2024-09-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/main/vignettes/potential_cwd.Rmd" class="external-link"><code>vignettes/potential_cwd.Rmd</code></a></small>
       <div class="hidden name"><code>potential_cwd.Rmd</code></div>
@@ -123,7 +123,9 @@ are part of the {cwd} package.</p>
 <p>Read data from the example FLUNXET file contained in this
 repository.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/data/df_fr-pue.rds"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/data/df_fr-pue.rds"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="co"># convert to from kPA to Pa (SI units are used for inputs to functions in the package)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PA_F <span class="op">=</span> <span class="fl">1e3</span> <span class="op">*</span> <span class="va">PA_F</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">visdat</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/visdat/reference/vis_miss.html" class="external-link">vis_miss</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></code></pre></div>
 <p><img src="potential_cwd_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
