@@ -63,7 +63,7 @@ adf |>
   labs(y = "Flux (mm/yr)")
 ```
 
-Each year, ET is greater than precipitation. Hence, the water deficit will not continue accumulating over multiple years.
+Each year, the annual precipitation is greater than ET. Hence, the water deficit will not continue accumulating over multiple years.
 
 ## Simulate snow
 
