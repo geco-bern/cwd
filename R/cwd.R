@@ -20,8 +20,8 @@
 #' @param doy_reset Day-of-year (integer) when deficit is to be reset to zero each year.
 #'
 #' @details A list of two data frames (tibbles). \code{inst} contains information about CWD "events".
-#' Each row corresonds to one event. An event is defined as a period of consecutive days where the
-#' CWD is positive (a water deficit)) and has the following columns:
+#' Each row corresponds to one event. An event is defined as a period of consecutive days where the
+#' CWD is positive (a water deficit) and has the following columns:
 #'
 #' \code{idx_start}: row number of \code{df} of which the date corresponds to the start of the event
 #' \code{len}: length of the event, quantified as number of rows in \code{df} corresponding to the event
@@ -69,14 +69,21 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
       done_finding_dropday <- FALSE
 
       # continue accumulating deficit as long as the deficit has not fallen below (thresh_terminate) times the maximum deficit attained in this event
+      # OR as long as deficit has not fallen below the maximum deficit attained - (thresh_terminat_absolut)
       # optionally
       while (iidx <= (nrow(df)-1) &&  # avoid going over row length
+             (deficit >= 0) &&  # Ensure deficit is positive  ############# changed to avoid negative deficit values
              ((deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit) ||
              (deficit - df[[ varname_wbal ]][iidx] > max_deficit - thresh_terminate_absolute))
              ){
 
         dday <- dday + 1
         deficit <- deficit - df[[ varname_wbal ]][iidx]
+
+        ##Immediately stop if deficit falls below zero
+        if (deficit < 0) {
+          break; ## Exit the loop if deficit is no longer positive
+        }
 
         if (max_deficit > 0 && deficit < max_deficit - thresh_terminate_absolute){
           print("now")
@@ -102,7 +109,7 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
           break
         }
 
-        # once, deficit has fallen below threshold, all subsequent dates are dropped (dday set to NA)
+        # once deficit has fallen below threshold, all subsequent dates are dropped (dday set to NA)
         if (done_finding_dropday){
           df$iinst[iidx] <- NA
           df$dday[iidx]  <- NA

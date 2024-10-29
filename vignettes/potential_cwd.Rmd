@@ -182,7 +182,7 @@ Therefore, we re-set the accumulation of the water deficit each year on the firs
 doy_reset <- lubridate::yday(lubridate::ymd("2000-11-01") + lubridate::dmonths(1))
 ```
 
-Distributiono of daily precipitation.
+Distribution of daily precipitation and PET to aid choosing an absolute threshold (`threshold_terminate_absolute`) determining the end of a CWD event (see next).
 ```{r}
 df |> 
   ggplot(aes(P_F, after_stat(density))) +
@@ -197,6 +197,10 @@ df |>
 
 
 Get the potential cumulative water deficit time series and individual *events*. Note that we use the argument `doy_reset` here to force a re-setting of the potential cumulative water deficit on that same day each year.
+A relative and an absolute option are possible for determining the threshold to which a CWD has to be reduced to to terminate the event: 
+1) `threshold_terminate`: Set the threshold relative to maximum CWD attained. Defaults to 0, meaning that the CWD has to be fully compensated by water infiltration into the soil to terminate a CWD event.
+2) `threshold_terminate_absolute`: threshold determining end of event as `thresh_terminate` but in absolute terms (in mm d-1).
+
 ```{r}
 df <- df |> 
   mutate(pwbal = P_F - pet)
@@ -205,6 +209,8 @@ out_cwd <- cwd(
   df,
   varname_wbal = "pwbal",
   varname_date = "TIMESTAMP",
+ #thresh_terminate = 2,
+  #doy_reset = 999,
   thresh_terminate_absolute = 100.0,
   thresh_drop = 0.0
   )
@@ -221,12 +227,12 @@ Plot the potential cumulative water deficit time series and events.
 ggplot() +
   geom_rect(
     data = out_cwd$inst,
-    aes(xmin = date_start, xmax = date_end, ymin = 0, ymax = max( out_cwd$df$deficit)),
+    aes(xmin = date_start, xmax = date_end, ymin = 0, ymax = max( out_cwd$df$deficit)), #reset to 0 for ylim
     fill = rgb(0,0,0,0.3),
     color = NA) +
   geom_line(data  =  out_cwd$df, aes(TIMESTAMP, deficit), color = "tomato") +
   theme_classic() +
-  ylim(0, max( out_cwd$df$deficit)) +
+  ylim(0, max(out_cwd$df$deficit)) + #reset to 0 for ylim
   labs(
     x = "Date", 
     y = "Potential cumulative water deficit (mm)"
