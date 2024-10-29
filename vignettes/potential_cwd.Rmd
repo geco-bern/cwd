@@ -33,7 +33,9 @@ A potential cumulative water deficit can be calculated using net radiation and t
 
 Read data from the example FLUNXET file contained in this repository.
 ```{r}
-df <- readRDS(file = paste0(here(), "/data/df_fr-pue.rds"))
+df <- readRDS(file = paste0(here(), "/data/df_fr-pue.rds")) |> 
+  # convert to from kPA to Pa (SI units are used for inputs to functions in the package)
+  mutate(PA_F = 1e3 * PA_F)
 
 visdat::vis_miss(df)
 ```
@@ -93,9 +95,9 @@ visdat::vis_miss(df)
 ... and convert from units of mm s-1 to mm d-1.
 ```{r}
 # tested: identical results are obtained with:
-# bigleaf::potential.ET(Tair = TA_F_MDS, pressure = PA_F*1e-3, Rn = NETRAD, approach = "Priestley-Taylor")$ET_pot * 30 * 30 * 24
+# bigleaf::potential.ET(Tair = TA_F_MDS, pressure = PA_F*1e-3, Rn = NETRAD, approach = "Priestley-Taylor")$ET_pot * 60 * 60 * 24
 df <- df |> 
-  mutate(pet = 30 * 30 * 24 * pet(NETRAD, TA_F_MDS, PA_F))
+  mutate(pet = 60 * 60 * 24 * pet(NETRAD, TA_F_MDS, PA_F))
 ```
 
 ## Visualise, contrasting to observed ET after conversion of energy to mass units
@@ -103,9 +105,9 @@ df <- df |>
 Convert latent heat flux (W/m2) to evapotranspiration in mass units (mm/d).
 ```{r}
 # tested: identical results are obtained with:
-# bigleaf::LE.to.ET(LE_F_MDS, TA_F_MDS)* 30 * 30 * 24
+# bigleaf::LE.to.ET(LE_F_MDS, TA_F_MDS)* 60 * 60 * 24
 le_to_et <- function(le, tc, patm){
-  1000 * 30 * 30 * 24 * le / (cwd::calc_enthalpy_vap(tc) * cwd::calc_density_h2o(tc, patm))
+  1000 * 60 * 60 * 24 * le / (cwd::calc_enthalpy_vap(tc) * cwd::calc_density_h2o(tc, patm))
 }
 
 df <- df |>
@@ -130,6 +132,7 @@ df |>
   ) +
   theme_classic()
 ```
+
 ## Cumulating PET - *P*
 
 Check annual totals.
@@ -147,10 +150,9 @@ adf |>
   theme_classic()
 ```
 
-In some cases, the mean annual PET may be larger than the mean annual precipitation (*P*), leading to a steady long-term increase of a *potential* cumulative water deficit. This is not the case here (see plot above). For demonstration, let's assume precipitation was 30% of its actual value and calculate the running sum of (PET - *P*) - the cumulative potential evapotranspiration.
+In some cases, the mean annual PET may be larger than the mean annual precipitation (*P*), leading to a steady long-term increase of a *potential* cumulative water deficit. This is the case here (see plot above).
 ```{r}
 df |> 
-  mutate(P_F = 0.3 * P_F) |>
   mutate(pcwd = cumsum(pet - P_F)) |> 
   ggplot(aes(TIMESTAMP, pcwd)) +
   geom_line() +

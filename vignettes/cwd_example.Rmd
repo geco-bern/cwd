@@ -30,7 +30,9 @@ This demonstrates the workflow for determining cumulative water deficit (CWD) ti
 
 Read data from the file contained in this repository.
 ```{r}
-df <- readRDS(file = paste0(here(), "/data/df_ch-lae.rds"))
+df <- readRDS(file = paste0(here(), "/data/df_ch-lae.rds")) |> 
+  # convert to from kPA to Pa (SI units are used for inputs to functions in the package)
+  mutate(PA_F = 1e3 * PA_F)
 ```
 
 ## Convert ET to mass units
@@ -38,9 +40,9 @@ df <- readRDS(file = paste0(here(), "/data/df_ch-lae.rds"))
 Convert latent heat flux (W/m2) to evapotranspiration in mass units (mm/d).
 ```{r}
 # tested: identical results are obtained with:
-# bigleaf::LE.to.ET(LE_F_MDS, TA_F_MDS)* 30 * 30 * 24
+# bigleaf::LE.to.ET(LE_F_MDS, TA_F_MDS)* 60 * 60 * 24
 le_to_et <- function(le, tc, patm){
-  1000 * 30 * 30 * 24 * le / (cwd::calc_enthalpy_vap(tc) * cwd::calc_density_h2o(tc, patm))
+  1000 * 60 * 60 * 24 * le / (cwd::calc_enthalpy_vap(tc) * cwd::calc_density_h2o(tc, patm))
 }
 
 df <- df |>
@@ -61,7 +63,7 @@ adf |>
   labs(y = "Flux (mm/yr)")
 ```
 
-Each year, ET is greater than precipitation. Hence, the water deficit will not continue accumulating over multiple years.
+Each year, the annual precipitation is greater than ET. Hence, the water deficit will not continue accumulating over multiple years.
 
 ## Simulate snow
 
@@ -135,7 +137,7 @@ ggplot() +
     color = NA) +
   geom_line(data  =  out_cwd$df, aes(TIMESTAMP, prec), size  =  0.3, color = "royalblue") +
   geom_line(data  =  out_cwd$df, aes(TIMESTAMP, deficit), color = "tomato") +
-  coord_cartesian(ylim = c(0, 60)) +
+  coord_cartesian(ylim = c(0, 170)) +
   theme_classic() +
   labs(x = "Date", y = "Cumulative water deficit (mm)")
 ```
@@ -279,7 +281,7 @@ out_cwd_weekly <- cwd(wdf,
                thresh_drop = 0.0)
 ```
 
-Plot weekly CWD time series.
+Plot weekly CWD time series in green (Daily CWD time series are plotted by the red line.)
 ```{r}
 ggplot() +
   geom_rect(
@@ -287,8 +289,10 @@ ggplot() +
     aes(xmin = date_start, xmax = date_end, ymin = -99, ymax = 99999),
     fill = rgb(0,0,0,0.3),
     color = NA) +
-  geom_line(data  =  out_cwd_weekly$df, aes(date, deficit), color = "tomato") +
-  coord_cartesian(ylim = c(0, 60)) +
+  geom_line(data  =  out_cwd$df, aes(TIMESTAMP, deficit), color = "tomato", alpha = 0.6) +
+  geom_line(data  =  out_cwd_weekly$df, aes(date, deficit), color = "springgreen4") +
+  coord_cartesian(ylim = c(0, 170)) +
   theme_classic() +
   labs(x = "Date", y = "Cumulative water deficit (mm)")
 ```
+
