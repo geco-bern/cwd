@@ -12,8 +12,6 @@
 #' @param varnam_prec A character string specifying the variable name for rain.
 #' @param varnam_snow A character string specifying the variable name for snow.
 #'
-#' @importFrom dplyr
-
 #' @details Returns a data frame with two added columns: (1) \code{liquid_to_soil}
 #' is the rain plus snow melt in mm d-1; (2) \code{snow_pool} is the snow mass
 #' in water equivalents (mm) for each day.

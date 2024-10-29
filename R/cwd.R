@@ -18,8 +18,6 @@
 #' after rain events but before full compensation of CWD. Defaults to 0.9.
 #' @param doy_reset Day-of-year (integer) when deficit is to be reset to zero each year.
 #'
-#' @importFrom dplyr
-#'
 #' @details A list of two data frames (tibbles). \code{inst} contains information about CWD "events".
 #' Each row corresonds to one event. An event is defined as a period of consecutive days where the
 #' CWD is positive (a water deficit)) and has the following columns:
