@@ -13,6 +13,7 @@
 #' during the same event, to which a CWD has to be reduced to terminate the event. Defaults to 0,
 #' meaning that the CWD has to be fully compensated by water infiltration into the soil to terminate
 #' a CWD event.
+#' @param thresh_terminate_absolute threshold determining end of event, as \code{thresh_terminate} but in absolute terms (in mm d-1).
 #' @param thresh_drop Level, relative to the CWD maximum of the same event, after which all data
 #' during the remainder of the event is set to missing values. This is to avoid interpreting data
 #' after rain events but before full compensation of CWD. Defaults to 0.9.
@@ -32,7 +33,8 @@
 #'
 #' @export
 #'
-cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_drop = 0.9, doy_reset = 999){
+cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
+                thresh_terminate_absolute = 10, thresh_drop = 0.9, doy_reset = 999){
 
   # corresponds to mct2.R
 
@@ -69,11 +71,16 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
       # continue accumulating deficit as long as the deficit has not fallen below (thresh_terminate) times the maximum deficit attained in this event
       # optionally
       while (iidx <= (nrow(df)-1) &&  # avoid going over row length
-             (deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit)
+             ((deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit) ||
+             (deficit - df[[ varname_wbal ]][iidx] > max_deficit - thresh_terminate_absolute))
              ){
 
         dday <- dday + 1
         deficit <- deficit - df[[ varname_wbal ]][iidx]
+
+        if (max_deficit > 0 && deficit < max_deficit - thresh_terminate_absolute){
+          print("now")
+        }
 
         # record the maximum deficit attained in this event
         if (deficit > max_deficit){
@@ -82,13 +89,14 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0, thresh_d
         }
 
         # record the day when deficit falls below (thresh_drop) times the current maximum deficit
-        if (deficit < (max_deficit * thresh_drop) && !done_finding_dropday){
+        if (deficit < (max_deficit * thresh_drop) && !done_finding_dropday ||
+            deficit < (max_deficit - thresh_terminate_absolute) && !done_finding_dropday){
           iidx_drop <- iidx
           done_finding_dropday <- TRUE
         }
 
         # stop accumulating on re-set day
-        if (df$doy[iidx] == doy_reset){
+        if (df$doy[iidx] == doy_reset || deficit < (max_deficit - thresh_terminate_absolute)){
           iidx_drop <- iidx
           max_deficit <- deficit
           break

@@ -182,6 +182,20 @@ Therefore, we re-set the accumulation of the water deficit each year on the firs
 doy_reset <- lubridate::yday(lubridate::ymd("2000-11-01") + lubridate::dmonths(1))
 ```
 
+Distributiono of daily precipitation.
+```{r}
+df |> 
+  ggplot(aes(P_F, after_stat(density))) +
+  geom_density(bw = 1) + 
+  xlim(-1, 30)
+
+df |> 
+  ggplot(aes(pet, after_stat(density))) +
+  geom_density(bw = 1) + 
+  xlim(-1, 30)
+```
+
+
 Get the potential cumulative water deficit time series and individual *events*. Note that we use the argument `doy_reset` here to force a re-setting of the potential cumulative water deficit on that same day each year.
 ```{r}
 df <- df |> 
@@ -191,9 +205,8 @@ out_cwd <- cwd(
   df,
   varname_wbal = "pwbal",
   varname_date = "TIMESTAMP",
-  thresh_terminate = 0.0,
-  thresh_drop = 0.0,
-  doy_reset = doy_reset
+  thresh_terminate_absolute = 100.0,
+  thresh_drop = 0.0
   )
 ```
 
