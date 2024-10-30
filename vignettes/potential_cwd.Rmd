@@ -199,7 +199,8 @@ df |>
 Get the potential cumulative water deficit time series and individual *events*. Note that we use the argument `doy_reset` here to force a re-setting of the potential cumulative water deficit on that same day each year.
 A relative and an absolute option are possible for determining the threshold to which a CWD has to be reduced to to terminate the event: 
 1) `threshold_terminate`: Set the threshold relative to maximum CWD attained. Defaults to 0, meaning that the CWD has to be fully compensated by water infiltration into the soil to terminate a CWD event.
-2) `threshold_terminate_absolute`: threshold determining end of event as `thresh_terminate` but in absolute terms (in mm d-1).
+2) `threshold_terminate_absolute`: threshold determining end of event as `thresh_terminate` but in absolute terms (in mm d-1). Default set to `NA`.
+If no option is given, the function defaults to the relative threshold.
 
 ```{r}
 df <- df |> 
@@ -209,10 +210,9 @@ out_cwd <- cwd(
   df,
   varname_wbal = "pwbal",
   varname_date = "TIMESTAMP",
- #thresh_terminate = 2,
-  #doy_reset = 999,
-  thresh_terminate_absolute = 100.0,
-  thresh_drop = 0.0
+  #thresh_terminate = 0,
+  #thresh_terminate_absolute = 10.0,
+  #thresh_drop = 0.0
   )
 ```
 
@@ -227,12 +227,12 @@ Plot the potential cumulative water deficit time series and events.
 ggplot() +
   geom_rect(
     data = out_cwd$inst,
-    aes(xmin = date_start, xmax = date_end, ymin = 0, ymax = max( out_cwd$df$deficit)), #reset to 0 for ylim
+    aes(xmin = date_start, xmax = date_end, ymin = 0, ymax = max( out_cwd$df$deficit)), 
     fill = rgb(0,0,0,0.3),
     color = NA) +
   geom_line(data  =  out_cwd$df, aes(TIMESTAMP, deficit), color = "tomato") +
   theme_classic() +
-  ylim(0, max(out_cwd$df$deficit)) + #reset to 0 for ylim
+  ylim(0, max(out_cwd$df$deficit)) + 
   labs(
     x = "Date", 
     y = "Potential cumulative water deficit (mm)"
