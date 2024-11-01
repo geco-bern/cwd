@@ -20,8 +20,8 @@
 #' @param doy_reset Day-of-year (integer) when deficit is to be reset to zero each year.
 #'
 #' @details A list of two data frames (tibbles). \code{inst} contains information about CWD "events".
-#' Each row corresonds to one event. An event is defined as a period of consecutive days where the
-#' CWD is positive (a water deficit)) and has the following columns:
+#' Each row corresponds to one event. An event is defined as a period of consecutive days where the
+#' CWD is positive (a water deficit) and has the following columns:
 #'
 #' \code{idx_start}: row number of \code{df} of which the date corresponds to the start of the event
 #' \code{len}: length of the event, quantified as number of rows in \code{df} corresponding to the event
@@ -34,7 +34,7 @@
 #' @export
 #'
 cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
-                thresh_terminate_absolute = 10, thresh_drop = 0.9, doy_reset = 999){
+                thresh_terminate_absolute = NA, thresh_drop = 0.9, doy_reset = 999){
 
   # corresponds to mct2.R
 
@@ -69,18 +69,95 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
       done_finding_dropday <- FALSE
 
       # continue accumulating deficit as long as the deficit has not fallen below (thresh_terminate) times the maximum deficit attained in this event
+      # OR as long as deficit has not fallen below the maximum deficit attained - (thresh_terminat_absolut)
       # optionally
-      while (iidx <= (nrow(df)-1) &&  # avoid going over row length
-             ((deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit) ||
-             (deficit - df[[ varname_wbal ]][iidx] > max_deficit - thresh_terminate_absolute))
-             ){
+      if(is.na(thresh_terminate_absolute)) {######determines whether an argument is given for thresh_terminate_absolute
+
+        while (iidx <= (nrow(df)-1) &&  # avoid going over row length
+               (deficit >= 0) &&  # Ensure deficit is positive
+               ((deficit - df[[ varname_wbal ]][iidx] > thresh_terminate * max_deficit))
+        ){
+
+          dday <- dday + 1
+          deficit <- deficit - df[[ varname_wbal ]][iidx]
+
+          ##Immediately stop if deficit falls below zero
+          if (deficit < 0) {
+            break; ## Exit the loop if deficit is no longer positive
+          }
+
+          ## for development:
+          # if (max_deficit > 0 && deficit < max_deficit - thresh_terminate_absolute){
+          #   print("now")
+          # }
+
+          # record the maximum deficit attained in this event
+          if (deficit > max_deficit){
+            max_deficit <- deficit
+            done_finding_dropday <- FALSE
+          }
+
+          # record the day when deficit falls below (thresh_drop) times the current maximum deficit
+          if (deficit < (max_deficit * thresh_drop) && !done_finding_dropday) {
+            iidx_drop <- iidx
+            done_finding_dropday <- TRUE
+          }
+
+          # stop accumulating on re-set day
+          if (df$doy[iidx] == doy_reset) {
+            iidx_drop <- iidx
+            max_deficit <- deficit
+            break
+          }
+
+          # once deficit has fallen below threshold, all subsequent dates are dropped (dday set to NA)
+          if (done_finding_dropday){
+            df$iinst[iidx] <- NA
+            df$dday[iidx]  <- NA
+          } else {
+            df$iinst[iidx] <- iinst
+            df$dday[iidx]  <- dday
+            iidx_drop <- iidx
+          }
+
+          # # (even before "drop-day" is found), drop data of days after rain, i.e., where current CWD is below the maximum (previously) attained in the same event
+          # if (deficit < max_deficit){
+          #   df$iinst[iidx] <- NA
+          #   df$dday[iidx]  <- NA
+          #   df$deficit[iidx] <- NA
+          # } else {
+          #   df$iinst[iidx] <- iinst
+          #   df$dday[iidx]  <- dday
+          #   df$deficit[iidx] <- deficit
+          # }
+
+          df$deficit[iidx] <- deficit
+
+          iidx <- iidx + 1
+
+
+
+      }
+
+    } else { ###########starts counting instances if thresh_terminate_absolute is given
+
+        while (iidx <= (nrow(df)-1) &&  # avoid going over row length
+                (deficit >= 0) &&  # Ensure deficit is positive
+                ((deficit - df[[ varname_wbal ]][iidx] > max_deficit - thresh_terminate_absolute))
+         ){
 
         dday <- dday + 1
         deficit <- deficit - df[[ varname_wbal ]][iidx]
 
-        if (max_deficit > 0 && deficit < max_deficit - thresh_terminate_absolute){
-          print("now")
+        ##Immediately stop if deficit falls below zero
+        if (deficit < 0) {
+          break; ## Exit the loop if deficit is no longer positive
         }
+
+        ## for development:
+        # if (max_deficit > 0 && deficit < max_deficit - thresh_terminate_absolute){
+        #   print("now")
+        # }
 
         # record the maximum deficit attained in this event
         if (deficit > max_deficit){
@@ -89,20 +166,19 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
         }
 
         # record the day when deficit falls below (thresh_drop) times the current maximum deficit
-        if (deficit < (max_deficit * thresh_drop) && !done_finding_dropday ||
-            deficit < (max_deficit - thresh_terminate_absolute) && !done_finding_dropday){
+        if (deficit < (max_deficit - thresh_terminate_absolute) && !done_finding_dropday){
           iidx_drop <- iidx
           done_finding_dropday <- TRUE
         }
 
         # stop accumulating on re-set day
-        if (df$doy[iidx] == doy_reset || deficit < (max_deficit - thresh_terminate_absolute)){
+        if (deficit < (max_deficit - thresh_terminate_absolute)){
           iidx_drop <- iidx
           max_deficit <- deficit
           break
         }
 
-        # once, deficit has fallen below threshold, all subsequent dates are dropped (dday set to NA)
+        # once deficit has fallen below threshold, all subsequent dates are dropped (dday set to NA)
         if (done_finding_dropday){
           df$iinst[iidx] <- NA
           df$dday[iidx]  <- NA
@@ -126,6 +202,7 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
         df$deficit[iidx] <- deficit
 
         iidx <- iidx + 1
+        }
 
       }
 
