@@ -81,6 +81,7 @@ maximum CWD attained during the same event.</p>
 <span>  <span class="va">varname_wbal</span>,</span>
 <span>  <span class="va">varname_date</span>,</span>
 <span>  thresh_terminate <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  thresh_terminate_absolute <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  thresh_drop <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  doy_reset <span class="op">=</span> <span class="fl">999</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -107,6 +108,11 @@ meaning that the CWD has to be fully compensated by water infiltration into the 
 a CWD event.</p></dd>
 
 
+<dt>thresh_terminate_absolute</dt>
+<dd><p>threshold determining end of event, as <code>thresh_terminate</code> but in absolute terms
+(in the same units as <code>varname_wbal</code> is provided in).</p></dd>
+
+
 <dt>thresh_drop</dt>
 <dd><p>Level, relative to the CWD maximum of the same event, after which all data
 during the remainder of the event is set to missing values. This is to avoid interpreting data
@@ -120,8 +126,8 @@ after rain events but before full compensation of CWD. Defaults to 0.9.</p></dd>
     <div id="details">
     <h2>Details</h2>
     <p>A list of two data frames (tibbles). <code>inst</code> contains information about CWD "events".
-Each row corresonds to one event. An event is defined as a period of consecutive days where the
-CWD is positive (a water deficit)) and has the following columns:</p>
+Each row corresponds to one event. An event is defined as a period of consecutive days where the
+CWD is positive (a water deficit) and has the following columns:</p>
 <p><code>idx_start</code>: row number of <code>df</code> of which the date corresponds to the start of the event
 <code>len</code>: length of the event, quantified as number of rows in <code>df</code> corresponding to the event
 <code>iinst</code>: event number

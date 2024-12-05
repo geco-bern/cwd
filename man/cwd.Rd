@@ -9,6 +9,7 @@ cwd(
   varname_wbal,
   varname_date,
   thresh_terminate = 0,
+  thresh_terminate_absolute = NA,
   thresh_drop = 0.9,
   doy_reset = 999
 )
@@ -25,6 +26,9 @@ during the same event, to which a CWD has to be reduced to terminate the event. 
 meaning that the CWD has to be fully compensated by water infiltration into the soil to terminate
 a CWD event.}
 
+\item{thresh_terminate_absolute}{threshold determining end of event, as \code{thresh_terminate} but in absolute terms
+(in the same units as \code{varname_wbal} is provided in).}
+
 \item{thresh_drop}{Level, relative to the CWD maximum of the same event, after which all data
 during the remainder of the event is set to missing values. This is to avoid interpreting data
 after rain events but before full compensation of CWD. Defaults to 0.9.}
@@ -40,8 +44,8 @@ maximum CWD attained during the same event.
 }
 \details{
 A list of two data frames (tibbles). \code{inst} contains information about CWD "events".
-Each row corresonds to one event. An event is defined as a period of consecutive days where the
-CWD is positive (a water deficit)) and has the following columns:
+Each row corresponds to one event. An event is defined as a period of consecutive days where the
+CWD is positive (a water deficit) and has the following columns:
 
 \code{idx_start}: row number of \code{df} of which the date corresponds to the start of the event
 \code{len}: length of the event, quantified as number of rows in \code{df} corresponding to the event

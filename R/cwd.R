@@ -13,7 +13,8 @@
 #' during the same event, to which a CWD has to be reduced to terminate the event. Defaults to 0,
 #' meaning that the CWD has to be fully compensated by water infiltration into the soil to terminate
 #' a CWD event.
-#' @param thresh_terminate_absolute threshold determining end of event, as \code{thresh_terminate} but in absolute terms (in mm d-1).
+#' @param thresh_terminate_absolute threshold determining end of event, as \code{thresh_terminate} but in absolute terms
+#'(in the same units as \code{varname_wbal} is provided in).
 #' @param thresh_drop Level, relative to the CWD maximum of the same event, after which all data
 #' during the remainder of the event is set to missing values. This is to avoid interpreting data
 #' after rain events but before full compensation of CWD. Defaults to 0.9.
