@@ -114,7 +114,10 @@ Stocker</h4>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/geco-bern/cwd" class="external-link">cwd</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/visdat/" class="external-link">visdat</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/recipes" class="external-link">recipes</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/recipes" class="external-link">recipes</a></span><span class="op">)</span></span>
+<span><span class="co"># library(readxl)</span></span>
+<span><span class="co"># library(zoo)</span></span>
+<span><span class="co"># library(ggpubr)</span></span></code></pre></div>
 <p>A potential cumulative water deficit can be calculated using net
 radiation and the <em>potential</em> evapotranspiration (PET). Here, we
 calculate PET based on net radiation and the approach by Priestley &amp;
@@ -127,11 +130,17 @@ are part of the {cwd} package.</p>
 repository.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/data/df_fr-pue.rds"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="co"># convert to from kPA to Pa (SI units are used for inputs to functions in the package)</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PA_F <span class="op">=</span> <span class="fl">1e3</span> <span class="op">*</span> <span class="va">PA_F</span><span class="op">)</span></span>
+<span>   <span class="co"># convert to from kPA to Pa (SI units are used for inputs to functions in the package)</span></span>
+<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PA_F <span class="op">=</span> <span class="fl">1e3</span> <span class="op">*</span> <span class="va">PA_F</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>   <span class="co"># Convert TIMESTAMP to Date format</span></span>
+<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TIMESTAMP <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">ymd</a></span><span class="op">(</span><span class="va">TIMESTAMP</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">visdat</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/visdat/reference/vis_miss.html" class="external-link">vis_miss</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></code></pre></div>
-<p><img src="potential_cwd_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<span></span>
+<span><span class="co"># df &lt;- readRDS(file = paste0(here(), "/data/df_fr-pue.rds")) |&gt;</span></span>
+<span><span class="co">#    # convert to from kPA to Pa (SI units are used for inputs to functions in the package)</span></span>
+<span><span class="co">#    mutate(PA_F = 1e3 * PA_F)</span></span>
+<span></span>
+<span><span class="co">#visdat::vis_miss(df)</span></span></code></pre></div>
 <p>Some net radiation data is missing. Impute missing values by KNN.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pp</span> <span class="op">&lt;-</span> <span class="fu">recipes</span><span class="fu">::</span><span class="fu"><a href="https://recipes.tidymodels.org/reference/recipe.html" class="external-link">recipe</a></span><span class="op">(</span></span>
@@ -178,8 +187,7 @@ repository.</p>
 <span>    <span class="op">-</span><span class="va">NETRAD_filled</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="fu">visdat</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/visdat/reference/vis_miss.html" class="external-link">vis_miss</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></code></pre></div>
-<p><img src="potential_cwd_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<span><span class="co">#visdat::vis_miss(df)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="apply-pet-function">Apply PET function<a class="anchor" aria-label="anchor" href="#apply-pet-function"></a>
@@ -208,7 +216,10 @@ mass units<a class="anchor" aria-label="anchor" href="#visualise-contrasting-to-
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>et <span class="op">=</span> <span class="fu">le_to_et</span><span class="op">(</span><span class="va">LE_F_MDS</span>, <span class="va">TA_F_MDS</span>, <span class="va">PA_F</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Plot mean seasonal cycle.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="co"># df |&gt; </span></span>
+<span><span class="co">#   mutate(TIMESTAMP = lubridate::as_date(as_datetime(TIMESTAMP_END)))</span></span>
+<span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>doy <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html" class="external-link">yday</a></span><span class="op">(</span><span class="va">TIMESTAMP</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">doy</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
@@ -308,6 +319,7 @@ to terminate a CWD event. 2) <code>threshold_terminate_absolute</code>:
 threshold determining end of event as <code>thresh_terminate</code> but
 in absolute terms (in mm d-1). Default set to <code>NA</code>. If no
 option is given, the function defaults to the relative threshold.</p>
+<p>Option 1: CWD calculation using a relative threshold:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pwbal <span class="op">=</span> <span class="va">P_F</span> <span class="op">-</span> <span class="va">pet</span><span class="op">)</span></span>
@@ -315,10 +327,10 @@ option is given, the function defaults to the relative threshold.</p>
 <span><span class="va">out_cwd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cwd.html">cwd</a></span><span class="op">(</span></span>
 <span>  <span class="va">df</span>,</span>
 <span>  varname_wbal <span class="op">=</span> <span class="st">"pwbal"</span>,</span>
-<span>  varname_date <span class="op">=</span> <span class="st">"TIMESTAMP"</span>,</span>
-<span>  <span class="co">#thresh_terminate = 0,</span></span>
-<span>  <span class="co">#thresh_terminate_absolute = 10.0,</span></span>
-<span>  <span class="co">#thresh_drop = 0.0</span></span>
+<span>  varname_date <span class="op">=</span> <span class="st">"TIMESTAMP"</span>, </span>
+<span>  thresh_terminate <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  thresh_drop <span class="op">=</span> <span class="fl">0.0</span>,</span>
+<span>  doy_reset <span class="op">=</span> <span class="va">doy_reset</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>Retain only events of a minimum length of 20 days.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
@@ -341,6 +353,42 @@ events.</p>
 <span>    y <span class="op">=</span> <span class="st">"Potential cumulative water deficit (mm)"</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
 <p><img src="potential_cwd_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<p>Option 2: CWD calculation using an absolute threshold, here 10mm. The
+deficit reset is not prescribed through a given DOY here but resets once
+the deficit falls below the threshold. Absolute thresholds should be
+selected based on the regional water balance.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pwbal <span class="op">=</span> <span class="va">P_F</span> <span class="op">-</span> <span class="va">pet</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">out_cwd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cwd.html">cwd</a></span><span class="op">(</span></span>
+<span>  <span class="va">df</span>,</span>
+<span>  varname_wbal <span class="op">=</span> <span class="st">"pwbal"</span>,</span>
+<span>  varname_date <span class="op">=</span> <span class="st">"TIMESTAMP"</span>, </span>
+<span>  thresh_terminate_absolute <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  thresh_drop <span class="op">=</span> <span class="fl">0.0</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p>Retain only events of a minimum length of 20 days.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span> <span class="op">&lt;-</span> <span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">len</span> <span class="op">&gt;=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
+<p>Plot the potential cumulative water deficit time series and
+events.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_rect</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>xmin <span class="op">=</span> <span class="va">date_start</span>, xmax <span class="op">=</span> <span class="va">date_end</span>, ymin <span class="op">=</span> <span class="fl">0</span>, ymax <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span> <span class="va">out_cwd</span><span class="op">$</span><span class="va">df</span><span class="op">$</span><span class="va">deficit</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>    fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0.3</span><span class="op">)</span>,</span>
+<span>    color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>data  <span class="op">=</span>  <span class="va">out_cwd</span><span class="op">$</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">TIMESTAMP</span>, <span class="va">deficit</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"tomato"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">out_cwd</span><span class="op">$</span><span class="va">df</span><span class="op">$</span><span class="va">deficit</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"Date"</span>, </span>
+<span>    y <span class="op">=</span> <span class="st">"Potential cumulative water deficit (mm)"</span></span>
+<span>    <span class="op">)</span></span></code></pre></div>
+<p><img src="potential_cwd_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
