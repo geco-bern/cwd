@@ -25,9 +25,9 @@ library(ggplot2)
 library(cwd)
 library(visdat)
 library(recipes)
-library(readxl)
-library(zoo)
-library(ggpubr)
+# library(readxl)
+# library(zoo)
+# library(ggpubr)
 ```
 
 A potential cumulative water deficit can be calculated using net radiation and the *potential* evapotranspiration (PET). Here, we calculate PET based on net radiation and the approach by Priestley & Taylor (1972) as implemented by Davis et al. (2017). Necessary functions are part of the {cwd} package.
@@ -36,7 +36,7 @@ A potential cumulative water deficit can be calculated using net radiation and t
 
 Read data from the example FLUNXET file contained in this repository.
 ```{r}
-df <- read.csv("~/Bern/Master thesis/FLUXNET/CH-Dav/FLX_CH-Dav_FLUXNET2015_FULLSET_DD_1997-2014_1-4.csv") |> 
+df <- readRDS(file = paste0(here(), "/data/df_fr-pue.rds")) |> 
    # convert to from kPA to Pa (SI units are used for inputs to functions in the package)
    mutate(PA_F = 1e3 * PA_F) |> 
    # Convert TIMESTAMP to Date format
