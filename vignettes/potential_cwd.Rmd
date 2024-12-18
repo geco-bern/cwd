@@ -25,6 +25,9 @@ library(ggplot2)
 library(cwd)
 library(visdat)
 library(recipes)
+library(readxl)
+library(zoo)
+library(ggpubr)
 ```
 
 A potential cumulative water deficit can be calculated using net radiation and the *potential* evapotranspiration (PET). Here, we calculate PET based on net radiation and the approach by Priestley & Taylor (1972) as implemented by Davis et al. (2017). Necessary functions are part of the {cwd} package.
@@ -33,11 +36,18 @@ A potential cumulative water deficit can be calculated using net radiation and t
 
 Read data from the example FLUNXET file contained in this repository.
 ```{r}
-df <- readRDS(file = paste0(here(), "/data/df_fr-pue.rds")) |> 
-  # convert to from kPA to Pa (SI units are used for inputs to functions in the package)
-  mutate(PA_F = 1e3 * PA_F)
+df <- read.csv("~/Bern/Master thesis/FLUXNET/CH-Dav/FLX_CH-Dav_FLUXNET2015_FULLSET_DD_1997-2014_1-4.csv") |> 
+   # convert to from kPA to Pa (SI units are used for inputs to functions in the package)
+   mutate(PA_F = 1e3 * PA_F) |> 
+   # Convert TIMESTAMP to Date format
+   mutate(TIMESTAMP = ymd(TIMESTAMP))
 
-visdat::vis_miss(df)
+
+# df <- readRDS(file = paste0(here(), "/data/df_fr-pue.rds")) |>
+#    # convert to from kPA to Pa (SI units are used for inputs to functions in the package)
+#    mutate(PA_F = 1e3 * PA_F)
+
+#visdat::vis_miss(df)
 ```
 
 Some net radiation data is missing. Impute missing values by KNN.
@@ -86,7 +96,7 @@ df <- df |>
     -NETRAD_filled
   )
 
-visdat::vis_miss(df)
+#visdat::vis_miss(df)
 ```
 
 
@@ -116,6 +126,9 @@ df <- df |>
 
 Plot mean seasonal cycle.
 ```{r}
+# df |> 
+#   mutate(TIMESTAMP = lubridate::as_date(as_datetime(TIMESTAMP_END)))
+
 df |> 
   mutate(doy = lubridate::yday(TIMESTAMP)) |> 
   group_by(doy) |> 
@@ -196,12 +209,15 @@ df |>
 ```
 
 
+
+
 Get the potential cumulative water deficit time series and individual *events*. Note that we use the argument `doy_reset` here to force a re-setting of the potential cumulative water deficit on that same day each year.
 A relative and an absolute option are possible for determining the threshold to which a CWD has to be reduced to to terminate the event: 
 1) `threshold_terminate`: Set the threshold relative to maximum CWD attained. Defaults to 0, meaning that the CWD has to be fully compensated by water infiltration into the soil to terminate a CWD event.
 2) `threshold_terminate_absolute`: threshold determining end of event as `thresh_terminate` but in absolute terms (in mm d-1). Default set to `NA`.
 If no option is given, the function defaults to the relative threshold.
 
+Option 1: CWD calculation using a relative threshold: 
 ```{r}
 df <- df |> 
   mutate(pwbal = P_F - pet)
@@ -209,10 +225,47 @@ df <- df |>
 out_cwd <- cwd(
   df,
   varname_wbal = "pwbal",
-  varname_date = "TIMESTAMP",
-  #thresh_terminate = 0,
-  #thresh_terminate_absolute = 10.0,
-  #thresh_drop = 0.0
+  varname_date = "TIMESTAMP", 
+  thresh_terminate = 0,
+  thresh_drop = 0.0,
+  doy_reset = doy_reset
+  )
+```
+
+Retain only events of a minimum length of 20 days.
+```{r}
+out_cwd$inst <- out_cwd$inst |>
+  filter(len >= 20)
+```
+
+Plot the potential cumulative water deficit time series and events.
+```{r}
+ggplot() +
+  geom_rect(
+    data = out_cwd$inst,
+    aes(xmin = date_start, xmax = date_end, ymin = 0, ymax = max( out_cwd$df$deficit)), 
+    fill = rgb(0,0,0,0.3),
+    color = NA) +
+  geom_line(data  =  out_cwd$df, aes(TIMESTAMP, deficit), color = "tomato") +
+  theme_classic() +
+  ylim(0, max(out_cwd$df$deficit)) + 
+  labs(
+    x = "Date", 
+    y = "Potential cumulative water deficit (mm)"
+    )
+```
+
+Option 2: CWD calculation using an absolute threshold, here 10mm. The deficit reset is not prescribed through a given DOY here but resets once the deficit falls below the threshold. Absolute thresholds should be selected based on the regional water balance. 
+```{r}
+df <- df |> 
+  mutate(pwbal = P_F - pet)
+
+out_cwd <- cwd(
+  df,
+  varname_wbal = "pwbal",
+  varname_date = "TIMESTAMP", 
+  thresh_terminate_absolute = 10,
+  thresh_drop = 0.0
   )
 ```
 

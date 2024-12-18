@@ -166,13 +166,13 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
           done_finding_dropday <- FALSE
         }
 
-        # record the day when deficit falls below (thresh_drop) times the current maximum deficit
+        # record the day when deficit falls below max_deficit - thresh_terminate_absolute
         if (deficit < (max_deficit - thresh_terminate_absolute) && !done_finding_dropday){
           iidx_drop <- iidx
           done_finding_dropday <- TRUE
         }
 
-        # stop accumulating on re-set day
+        # stop accumulating when deficit falls below max_deficit - thresh_terminate_absolute
         if (deficit < (max_deficit - thresh_terminate_absolute)){
           iidx_drop <- iidx
           max_deficit <- deficit
