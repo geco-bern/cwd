@@ -201,16 +201,6 @@ df |>
 
 Get the potential cumulative water deficit time series and individual *events*. Note that we use the argument `doy_reset` here to force a re-setting of the potential cumulative water deficit on that same day each year.
 
-A relative and an absolute option are possible for determining the threshold to which a CWD has to be reduced to to terminate the event: 
-
-1. `threshold_terminate`: Set the threshold relative to maximum CWD attained. Defaults to 0, meaning that the CWD has to be fully compensated by water infiltration into the soil to terminate a CWD event.
-2. `threshold_terminate_absolute`: threshold determining end of event as `thresh_terminate` but in absolute terms (in mm d-1). Default set to `NA`.
-
-If no option is given, the function defaults to the relative threshold.
-
-### Option 1
-
-CWD calculation using a relative threshold: 
 ```{r}
 df <- df |> 
   mutate(pwbal = P_F - pet)
@@ -219,48 +209,8 @@ out_cwd <- cwd(
   df,
   varname_wbal = "pwbal",
   varname_date = "TIMESTAMP", 
-  thresh_terminate = 0,
   thresh_drop = 0.0,
   doy_reset = doy_reset
-  )
-```
-
-Retain only events of a minimum length of 20 days.
-```{r}
-out_cwd$inst <- out_cwd$inst |>
-  filter(len >= 20)
-```
-
-Plot the potential cumulative water deficit time series and events.
-```{r}
-ggplot() +
-  geom_rect(
-    data = out_cwd$inst,
-    aes(xmin = date_start, xmax = date_end, ymin = 0, ymax = max( out_cwd$df$deficit)), 
-    fill = rgb(0,0,0,0.3),
-    color = NA) +
-  geom_line(data  =  out_cwd$df, aes(TIMESTAMP, deficit), color = "tomato") +
-  theme_classic() +
-  ylim(0, max(out_cwd$df$deficit)) + 
-  labs(
-    x = "Date", 
-    y = "Potential cumulative water deficit (mm)"
-    )
-```
-
-### Option 2
-
-CWD calculation using an absolute threshold, here 10mm. The deficit reset is not prescribed through a given DOY here but resets once the deficit falls below the threshold. Absolute thresholds should be selected based on the regional water balance. 
-```{r}
-df <- df |> 
-  mutate(pwbal = P_F - pet)
-
-out_cwd <- cwd(
-  df,
-  varname_wbal = "pwbal",
-  varname_date = "TIMESTAMP", 
-  thresh_terminate_absolute = 10,
-  thresh_drop = 0.0
   )
 ```
 

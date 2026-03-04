@@ -45,12 +45,6 @@ cwd <- function(
   thresh_drop = 0.9,
   doy_reset = NA
 ) {
-  # corresponds to mct2.R
-
-  # if (thresh_terminate > thresh_drop) {
-  #   warning("Aborting. thresh_terminate must be smaller or equal thresh_drop. Setting it equal.")
-  #   thresh_terminate <- thresh_drop
-  # }
 
   # create day-of-year column
   df$doy <- lubridate::yday(df[[varname_date]])
@@ -78,19 +72,13 @@ cwd <- function(
       iidx <- idx
       found_dropday <- FALSE
 
-      # continue accumulating deficit as long as the deficit has not fallen below (thresh_terminate) times the maximum deficit attained in this event
-      # OR as long as deficit has not fallen below the maximum deficit attained - (thresh_terminat_absolut)
-      # optionally
       while (
         # avoid going over row length
         iidx <= (nrow(df) - 1) &&
 
         # Ensure deficit is positive
-        (deficit >= 0) #&&
+        (deficit >= 0)
 
-        # # stop accumulating if deficit falls under termination threshold
-        # ((deficit - df[[varname_wbal]][iidx] > thresh_terminate * max_deficit)) &&
-        # ((deficit - df[[varname_wbal]][iidx] > max_deficit - thresh_terminate_absolute))
       ) {
 
         # update
@@ -114,20 +102,6 @@ cwd <- function(
           iidx_drop <- iidx
           found_dropday <- TRUE
         }
-
-        # # stop accumulating when deficit falls below max_deficit - thresh_terminate_absolute
-        # if (deficit < (max_deficit - thresh_terminate_absolute)) {
-        #   iidx_drop <- iidx
-        #   max_deficit <- deficit
-        #   break
-        # }
-        #
-        # # stop accumulating when deficit falls below max_deficit - thresh_terminate_absolute
-        # if (deficit < (max_deficit * thresh_drop)) {
-        #   iidx_drop <- iidx
-        #   max_deficit <- deficit
-        #   break
-        # }
 
         # stop accumulating on re-set day
         if (!is.na(doy_reset)){

@@ -156,11 +156,12 @@ The instances (events) are available in summarised form:
 out_cwd$inst
 ```
 
-You can for example plot the distribution of event (instance) length:
+You can for example plot the distribution of event (instance) length (here in days):
 ```{r}
 out_cwd$inst |> 
   ggplot(aes(len, after_stat(count))) +
-  geom_histogram()
+  geom_histogram(color = "black", fill = "grey60") +
+  labs(x = "Event length (d)")
 ```
 
 ## Extreme value statistics
@@ -295,11 +296,12 @@ wdf <- df |>
   # create a date object again, considering the first day of the week
   mutate(date = lubridate::ymd(paste0(year, "-01-01")) + lubridate::weeks(week-1))
 
-out_cwd_weekly <- cwd(wdf,
-               varname_wbal = "wbal",
-               varname_date = "date",
-               thresh_terminate = 0.0,
-               thresh_drop = 0.0)
+out_cwd_weekly <- cwd(
+  wdf,
+  varname_wbal = "wbal",
+  varname_date = "date",
+  thresh_drop = 0.0
+  )
 ```
 
 Plot weekly CWD time series in green (Daily CWD time series are plotted by the red line.)
