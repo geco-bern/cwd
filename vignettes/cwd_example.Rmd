@@ -116,7 +116,6 @@ out_cwd <- cwd(
   df,
   varname_wbal = "wbal",
   varname_date = "TIMESTAMP",
-  # thresh_terminate_absolute = 50.0,
   thresh_drop = 0.0
   )
 ```
@@ -170,7 +169,7 @@ Get annual maxima and fit a general extreme value distribution using the {extRem
 ```{r}
 vals <- out_cwd$inst %>%
   group_by(year(date_start)) %>%
-  summarise(deficit = max(deficit, na.rm = TRUE)) %>%
+  summarise(deficit = max(max_deficit, na.rm = TRUE)) %>%
   pull(deficit)
 
 evd_gev <- extRemes::fevd(x = vals, type = "GEV", method = "MLE", units = "years")
@@ -271,7 +270,7 @@ Visualise the estimated event size with a return period of $T = 80$ y as the red
 ggplot() +
   geom_histogram(
     data = out_cwd$inst,
-    aes(x = deficit, y = after_stat(density)),
+    aes(x = max_deficit, y = after_stat(density)),
     color = "black",
     position="identity",
     bins = 6

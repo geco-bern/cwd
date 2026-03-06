@@ -8,10 +8,9 @@ cwd(
   df,
   varname_wbal,
   varname_date,
-  thresh_terminate = 0,
-  thresh_terminate_absolute = NA,
-  thresh_drop = 0.9,
-  doy_reset = 999
+  thresh_drop = 0,
+  doy_reset = NA,
+  do_surplus = FALSE
 )
 }
 \arguments{
@@ -21,19 +20,16 @@ cwd(
 
 \item{varname_date}{name of the variable representing information about the date (format irrelevant)}
 
-\item{thresh_terminate}{threshold determining the level, relative to maximum CWD attained
-during the same event, to which a CWD has to be reduced to terminate the event. Defaults to 0,
-meaning that the CWD has to be fully compensated by water infiltration into the soil to terminate
-a CWD event.}
-
-\item{thresh_terminate_absolute}{threshold determining end of event, as \code{thresh_terminate} but in absolute terms
-(in the same units as \code{varname_wbal} is provided in).}
-
 \item{thresh_drop}{Level, relative to the CWD maximum of the same event, after which all data
 during the remainder of the event is set to missing values. This is to avoid interpreting data
 after rain events but before full compensation of CWD. Defaults to 0.9.}
 
-\item{doy_reset}{Day-of-year (integer) when deficit is to be reset to zero each year.}
+\item{doy_reset}{Day-of-year (integer) when deficit is to be reset to zero each year. Defaults to
+\code{NA} (not considered). If \code{doy_reset} is set to a non-NA value, it overrides event termination
+criteria given by \code{thresh_terminate} or \code{thresh_terminate_absolute}.}
+
+\item{do_surplus}{A logical specifying whether the cumulative surplus should be calculated.
+Defaults to \code{FALSE}.}
 }
 \description{
 Derives time series of the cumulative water deficit (CWD), given time series of
