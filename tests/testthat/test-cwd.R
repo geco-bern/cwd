@@ -43,7 +43,7 @@ test_that("cwd warns and clamps thresh_terminate above thresh_drop", {
 })
 
 test_that("cwd reproduces the bundled vignette workflow", {
-  df <- readRDS(test_path("../../data/df_ch-lae.rds"))
+  df <- cwd:::df_CH_LAE
   df <- dplyr::mutate(df, PA_F = 1e3 * PA_F)
 
   le_to_et <- function(le, tc, patm) {
