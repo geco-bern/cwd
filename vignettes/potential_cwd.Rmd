@@ -36,7 +36,7 @@ A potential cumulative water deficit can be calculated using net radiation and t
 
 Read data from the example FLUNXET file contained in this repository.
 ```{r}
-df <- readRDS(file = paste0(here(), "/data/df_fr-pue.rds")) |> 
+df <- cwd:::df_FR_PUE |> # readRDS(file = paste0(here(), "/data/df_fr-pue.rds")) |> 
    # convert to from kPA to Pa (SI units are used for inputs to functions in the package)
    mutate(PA_F = 1e3 * PA_F) |> 
    # Convert TIMESTAMP to Date format

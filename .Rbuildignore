@@ -1,4 +1,33 @@
+# docs and unit tests
+^\.github$
+^_pkgdown\.yml$
+^pkgdown$
+^docs$
+^analysis$
+^data-raw$
+^benchmarking$
+^Rscripts$
+^Rold$
+^.idea$
+
+# R-markdown files in the root folder.
+^.*.ods$
+^LICENSE.*$
+^CONDUCT\.md$
+^NEWS\.md$
+^README\.md$
+^contact\.md$
+^cran-comments\.md$
+^review-notes\.md$
+# R Stuff
 ^.*\.Rproj$
+^.*\.Renviron$
 ^\.Rproj\.user$
-^doc$
-^Meta$
+^\.httr-oauth$
+^.*-logo\..*$
+^codemeta\.json$
+^CRAN-SUBMISSION$
+# Debugging
+^\.vscode$
+^CITATION\.cff$
+^debug$

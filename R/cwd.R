@@ -47,13 +47,13 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
   # create day-of-year column
   df$doy <- lubridate::yday(df[[ varname_date ]])
 
-  inst <- tibble()
+  inst <- tibble::tibble()
   idx <- 0
   iinst <- 1
 
   df <- df |>
-    ungroup() |>
-    mutate(iinst = NA, dday = NA, deficit = 0)
+    dplyr::ungroup() |>
+    dplyr::mutate(iinst = NA, dday = NA, deficit = 0)
 
   # search all dates
   while (idx <= (nrow(df)-1)){
@@ -208,7 +208,7 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
       }
 
       # record instance
-      this_inst <- tibble( idx_start = idx,
+      this_inst <- tibble::tibble( idx_start = idx,
                            len = iidx_drop-idx,
                            iinst = iinst,
                            date_start = df[[varname_date]][idx],
@@ -216,7 +216,7 @@ cwd <- function(df, varname_wbal, varname_date, thresh_terminate = 0.0,
                            deficit = max_deficit
                            )
       inst <- inst |>
-        bind_rows(this_inst)
+        dplyr::bind_rows(this_inst)
 
       # update
       iinst <- iinst + 1
