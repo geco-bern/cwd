@@ -1,4 +1,13 @@
+url: https://geco-bern.github.io/cwd/
 template:
+  bootstrap: 3
   package: gecotemplate
   params:
-    mathjax: true
+   mathjax: true
+articles:
+  - title: All vignettes
+    contents:
+      - cwd_example
+      - potential_cwd
+development:
+  mode: auto
