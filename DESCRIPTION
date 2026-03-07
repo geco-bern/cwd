@@ -30,9 +30,7 @@ Suggests:
     extRemes,
     tidyr,
     visdat,
-    recipes,
-    here,
-    readr
+    recipes
 License: AGPL-3
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
