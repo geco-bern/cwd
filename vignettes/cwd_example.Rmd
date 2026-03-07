@@ -80,7 +80,7 @@ Visualise snow mass equivalent time series.
 df |> 
   ggplot(aes(TIMESTAMP, snow_pool)) + 
   geom_line() +
-  labs(x = "Date", "Snow mass equivalent (mm)")
+  labs(x = "Date", y = "Snow mass equivalent (mm)")
 ```
 
 This looks like it's a lot of snow, actually. Maybe the melting rate is too slow.
