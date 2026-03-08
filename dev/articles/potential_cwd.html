@@ -93,10 +93,8 @@ Stocker</h4>
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org" class="external-link">readr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/" class="external-link">here</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">extRemes</span><span class="op">)</span></span>
@@ -118,16 +116,11 @@ are part of the {cwd} package.</p>
 <p>Read data from the example FLUNXET file contained in this
 repository.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">cwd</span><span class="fu">:::</span><span class="va">df_FR_PUE</span> <span class="op">|&gt;</span> <span class="co"># readRDS(file = paste0(here(), "/data/df_fr-pue.rds")) |&gt; </span></span>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">cwd</span><span class="fu">:::</span><span class="va">df_FR_PUE</span> <span class="op">|&gt;</span></span>
 <span>   <span class="co"># convert to from kPA to Pa (SI units are used for inputs to functions in the package)</span></span>
 <span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>PA_F <span class="op">=</span> <span class="fl">1e3</span> <span class="op">*</span> <span class="va">PA_F</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>   <span class="co"># Convert TIMESTAMP to Date format</span></span>
 <span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>TIMESTAMP <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">ymd</a></span><span class="op">(</span><span class="va">TIMESTAMP</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="co"># df &lt;- readRDS(file = paste0(here(), "/data/df_fr-pue.rds")) |&gt;</span></span>
-<span><span class="co">#    # convert to from kPA to Pa (SI units are used for inputs to functions in the package)</span></span>
-<span><span class="co">#    mutate(PA_F = 1e3 * PA_F)</span></span>
 <span></span>
 <span><span class="co">#visdat::vis_miss(df)</span></span></code></pre></div>
 <p>Some net radiation data is missing. Impute missing values by KNN.</p>
