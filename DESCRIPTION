@@ -19,12 +19,11 @@ Depends:
     R (>= 4.1.0)
 Imports:
     dplyr,
-    here,
     lubridate,
-    readr,
     tibble
 Suggests:
     rmarkdown,
+    readr,
     knitr,
     ggplot2,
     patchwork,

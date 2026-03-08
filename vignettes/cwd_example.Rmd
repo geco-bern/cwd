@@ -14,9 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r message=FALSE}
-library(readr)
 library(dplyr)
-library(here)
 library(lubridate)
 library(patchwork)
 library(extRemes)
