@@ -1,3 +1,5 @@
+# cwd (development version)
+
 # cwd 2.0
 
 * Add `thresh_terminate_absolute` and `doy_reset` as arguments to `cwd()`

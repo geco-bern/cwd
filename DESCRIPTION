@@ -1,7 +1,7 @@
 Package: cwd
 Type: Package
 Title: Derives cumulative water deficit events and time series
-Version: 2.0
+Version: 2.0.0.9000
 Authors@R: c(
             person(
               family = "Benjamin",
