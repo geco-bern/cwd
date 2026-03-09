@@ -114,7 +114,6 @@ out_cwd <- cwd(
   df,
   varname_wbal = "wbal",
   varname_date = "TIMESTAMP",
-  thresh_terminate = 0.0,
   thresh_drop = 0.0
   )
 ```
@@ -139,6 +138,28 @@ ggplot() +
   theme_classic() +
   labs(x = "Date", y = "Cumulative water deficit (mm)")
 ```
+## Event analysis
+
+Plot any variable contained in the original data frame as a "superimposed epoch analysis", that is with data from multiple events (indicated by index `iinst`) versus the day into event (`dday`).
+```{r}
+out_cwd$df |> 
+  ggplot(aes(dday, et, group = iinst)) +
+  geom_line(alpha = 0.5) +
+  theme_classic()
+```
+
+The instances (events) are available in summarised form:
+```{r}
+out_cwd$inst
+```
+
+You can for example plot the distribution of event (instance) length (here in days):
+```{r}
+out_cwd$inst |> 
+  ggplot(aes(len, after_stat(count))) +
+  geom_histogram(color = "black", fill = "grey60") +
+  labs(x = "Event length (d)")
+```
 
 ## Extreme value statistics
 
@@ -146,7 +167,7 @@ Get annual maxima and fit a general extreme value distribution using the {extRem
 ```{r}
 vals <- out_cwd$inst %>%
   group_by(year(date_start)) %>%
-  summarise(deficit = max(deficit, na.rm = TRUE)) %>%
+  summarise(deficit = max(max_deficit, na.rm = TRUE)) %>%
   pull(deficit)
 
 evd_gev <- extRemes::fevd(x = vals, type = "GEV", method = "MLE", units = "years")
@@ -247,7 +268,7 @@ Visualise the estimated event size with a return period of $T = 80$ y as the red
 ggplot() +
   geom_histogram(
     data = out_cwd$inst,
-    aes(x = deficit, y = after_stat(density)),
+    aes(x = max_deficit, y = after_stat(density)),
     color = "black",
     position="identity",
     bins = 6
@@ -272,11 +293,12 @@ wdf <- df |>
   # create a date object again, considering the first day of the week
   mutate(date = lubridate::ymd(paste0(year, "-01-01")) + lubridate::weeks(week-1))
 
-out_cwd_weekly <- cwd(wdf,
-               varname_wbal = "wbal",
-               varname_date = "date",
-               thresh_terminate = 0.0,
-               thresh_drop = 0.0)
+out_cwd_weekly <- cwd(
+  wdf,
+  varname_wbal = "wbal",
+  varname_date = "date",
+  thresh_drop = 0.0
+  )
 ```
 
 Plot weekly CWD time series in green (Daily CWD time series are plotted by the red line.)

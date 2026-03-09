@@ -19,8 +19,7 @@ Depends:
     R (>= 4.1.0)
 Imports:
     dplyr,
-    lubridate,
-    tibble
+    lubridate
 Suggests:
     rmarkdown,
     readr,
