@@ -44,7 +44,7 @@ cwd <- function(
   # create day-of-year column
   df$doy <- as.integer(format(df[[varname_date]], "%j"))
 
-  inst <- tibble()
+  inst <- tibble::tibble()
   idx <- 0
   iinst <- 1
   idx_max_deficit <- 0

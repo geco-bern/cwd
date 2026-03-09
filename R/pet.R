@@ -58,7 +58,7 @@ pet <- function(netrad, tc, patm, return_df = FALSE){
   pet <- par_splash$alpha * eet
 
   if (return_df){
-    return(tibble(pet = pet))
+    return(tibble::tibble(pet = pet))
   } else {
     return(pet)
   }

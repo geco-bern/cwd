@@ -14,9 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r message=FALSE}
-library(readr)
 library(dplyr)
-library(here)
 library(lubridate)
 library(patchwork)
 library(extRemes)
@@ -30,7 +28,7 @@ This demonstrates the workflow for determining cumulative water deficit (CWD) ti
 
 Read data from the file contained in this repository.
 ```{r}
-df <- readRDS(file = paste0(here(), "/data/df_ch-lae.rds")) |> 
+df <- cwd:::df_CH_LAE |>
   # convert to from kPA to Pa (SI units are used for inputs to functions in the package)
   mutate(PA_F = 1e3 * PA_F)
 ```
@@ -80,7 +78,7 @@ Visualise snow mass equivalent time series.
 df |> 
   ggplot(aes(TIMESTAMP, snow_pool)) + 
   geom_line() +
-  labs(x = "Date", x = "Snow mass equivalent (mm)")
+  labs(x = "Date", y = "Snow mass equivalent (mm)")
 ```
 
 This looks like it's a lot of snow, actually. Maybe the melting rate is too slow.
