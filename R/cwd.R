@@ -158,7 +158,7 @@ cwd <- function(
 
   ## Cumulate surplus ----------------------------------------------------------
   if (do_surplus){
-    inst_surplus <- tibble()
+    inst_surplus <- tibble::tibble()
     idx <- 0
     iinst <- 1
     idx_max_surplus <- 0
@@ -229,13 +229,13 @@ cwd <- function(
           # stop accumulating when max deficit of preceding deficit event was attained
           tmp <- inst_ann |>
             # identify preceding deficit event
-            filter(idx_max_deficit <= iidx) |>
-            tail(1)
+            dplyr::filter(idx_max_deficit <= iidx) |>
+            dplyr::slice_tail(n = 1)
 
           if (nrow(tmp) > 0){
             # get day (index) when maximum deficit was attained
             idx_max_deficit <- tmp |>
-              pull(idx_max_deficit)
+              dplyr::pull(idx_max_deficit)
 
             # exit surplus accumulation
             if (iidx == idx_max_deficit){
