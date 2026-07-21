@@ -89,8 +89,11 @@ cwd <- function(
         dday <- dday + 1
         deficit <- deficit - df[[varname_wbal]][iidx]
 
-        # Immediately stop if deficit falls below zero
+        # Immediately stop if deficit falls below zero # NOTE: why is this needed?
         if (deficit < 0) {
+          # Before exiting still record the date of the drop
+          iidx_drop <- iidx
+          found_dropday <- TRUE
           break # Exit the loop if deficit is no longer positive
         }
 

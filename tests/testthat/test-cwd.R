@@ -57,7 +57,7 @@ test_that("cwd reproduces the bundled vignette workflow", {
   # ggplot(out$df, aes(x=doy, y=wbal)) + geom_point()
   # ggplot(out$df, aes(x=doy, y=deficit)) + geom_point()
 
-  expect_equal(nrow(out$inst), 199)
+  expect_equal(nrow(out$inst), 200)
   expect_equal(sum(!is.na(out$df$iinst)), 2949)
   expect_equal(max(out$df$deficit, na.rm = TRUE), 153.6691, tolerance = 1e-4)
   expect_equal(as.character(out$inst$date_start[which.max(out$inst$max_deficit)]), "2009-05-16")
