@@ -50,8 +50,8 @@ cwd <- function(
   idx_max_deficit <- 0
 
   df <- df |>
-    ungroup() |>
-    mutate(
+    dplyr::ungroup() |>
+    dplyr::mutate(
       iinst = NA,
       dday = NA,
       deficit = 0,
