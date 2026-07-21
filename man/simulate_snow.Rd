@@ -10,7 +10,9 @@ simulate_snow(df, varnam_temp, varnam_prec, varnam_snow)
 \item{df}{A data frame containing columns for air temperature (deg. C),
 precipitation in liquid form (rain, mm d-1), and precipitation in solid form
 (snow water equivalents, mm d-1). The column names of the respective
-variables are provided by the other arguments.}
+variables are provided by the other arguments. Data frame must contain at
+least 365 days (i.e. a full year). It can, however, contain more e.g. 400 days,
+i.e. the current year still ongoing.}
 
 \item{varnam_temp}{A character string specifying the variable name for air
 temperature.}
