@@ -9,5 +9,6 @@ articles:
     contents:
       - cwd_example
       - potential_cwd
+      - cumulative_surplus_example
 development:
   mode: auto
