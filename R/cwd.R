@@ -127,7 +127,7 @@ cwd <- function(
         if (!is.na(doy_reset)){
           if (df$doy[iidx] == doy_reset) {
             if (!found_dropday){
-              iidx_drop <- idx
+              iidx_drop <- iidx + 1 # +1 since we break loop
             }
             break
           }
