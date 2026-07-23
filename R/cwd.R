@@ -92,7 +92,7 @@ cwd <- function(
         # Immediately stop if deficit falls below zero # NOTE: why is this needed?
         if (deficit < 0) {
           # Before exiting still record the date of the drop
-          iidx_drop <- iidx
+          iidx_drop <- iidx + 1
           found_dropday <- TRUE
           break # Exit the loop if deficit is no longer positive
         }
