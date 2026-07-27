@@ -1,4 +1,5 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5359053.svg)](https://doi.org/10.5281/zenodo.5359053)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14249538.svg)](https://doi.org/10.5281/zenodo.14249538)
 
 # The cumulative water deficit algorithm
 
@@ -14,7 +15,13 @@ Please cite the published paper and the code as:
 
 > Stocker, B.D., Tumber-Davila, S.J., Konings, A.G., Anderson, M.B., Hain, C. and Jackson, R.B.: Global patterns of water storage in the rooting zones of vegetation, *Nature Geoscience*, https://www.nature.com/articles/s41561-023-01125-2, 2023
 
-> Benjamin Stocker. (2021). cwd v1.0: R package for cumulative water deficit calculation (v1.0). Zenodo. https://doi.org/10.5281/zenodo.5359053
+> Benjamin Stocker. (202X). cwd vX.X: R package for cumulative water deficit calculation (vX.X). Zenodo. https://doi.org/10.5281/zenodo.14249538
+
+## Documentation
+
+The documentation of the newest released package version can be found at: [geco-bern.github.io/cwd/](geco-bern.github.io/cwd/),
+while the latest documentation of the development version can be found at: [geco-bern.github.io/cwd/dev/](geco-bern.github.io/cwd/dev/).
+
 
 ## Installation
 
