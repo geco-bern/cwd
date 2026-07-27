@@ -1,4 +1,4 @@
-# cwd (development version)
+# cwd 3.0.0
 
 * Reworked and simplified cwd:
   * argument `thresh_terminate` removed (i.e. threshold-based event re-setting)
