@@ -57,7 +57,12 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="development version" id="cwd-development-version">cwd (development version)<a class="anchor" aria-label="anchor" href="#cwd-development-version"></a></h2>
-</div>
+<ul><li>Reworked and simplified cwd:
+<ul><li>argument <code>thresh_terminate</code> removed (i.e. threshold-based event re-setting)</li>
+<li>argumed <code>do_surplus</code> added</li>
+</ul></li>
+<li>Clarified error message when partial year is run. simulate_snow() requires at least 365 days (due to snowpack spinup), but allows for partial last year.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.0" id="cwd-20">cwd 2.0<a class="anchor" aria-label="anchor" href="#cwd-20"></a></h2>
 <ul><li>Add <code>thresh_terminate_absolute</code> and <code>doy_reset</code> as arguments to <code><a href="../reference/cwd.html">cwd()</a></code>

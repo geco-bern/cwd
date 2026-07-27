@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author">Beni
 Stocker</h4>
             
-            <h4 data-toc-skip class="date">2026-03-08</h4>
+            <h4 data-toc-skip class="date">2026-07-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/main/vignettes/cwd_example.Rmd" class="external-link"><code>vignettes/cwd_example.Rmd</code></a></small>
       <div class="hidden name"><code>cwd_example.Rmd</code></div>
@@ -192,7 +192,6 @@ units, or equivalently in mm/d.</p>
 <span>  <span class="va">df</span>,</span>
 <span>  varname_wbal <span class="op">=</span> <span class="st">"wbal"</span>,</span>
 <span>  varname_date <span class="op">=</span> <span class="st">"TIMESTAMP"</span>,</span>
-<span>  thresh_terminate <span class="op">=</span> <span class="fl">0.0</span>,</span>
 <span>  thresh_drop <span class="op">=</span> <span class="fl">0.0</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>Retain only events of a minimum length of 20 days.</p>
@@ -217,17 +216,78 @@ units, or equivalently in mm/d.</p>
 <span><span class="co">## <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">## <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">## <span style="color: #555555;">generated.</span></span></span></code></pre>
-<p><img src="cwd_example_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="cwd_example_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700">
+## Event analysis</p>
+<p>Plot any variable contained in the original data frame as a
+“superimposed epoch analysis”, that is with data from multiple events
+(indicated by index <code>iinst</code>) versus the day into event
+(<code>dday</code>).</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out_cwd</span><span class="op">$</span><span class="va">df</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">dday</span>, <span class="va">et</span>, group <span class="op">=</span> <span class="va">iinst</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: Removed 703 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">## (`geom_line()`).</span></span></code></pre>
+<p><img src="cwd_example_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="700"></p>
+<p>The instances (events) are available in summarised form:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span></span></code></pre></div>
+<pre><code><span><span class="co">##    idx_start len iinst date_start   date_end max_deficit idx_max_deficit</span></span>
+<span><span class="co">## 1         22  22     4 2005-01-22 2005-02-12    7.764306              39</span></span>
+<span><span class="co">## 2         44  33     5 2005-02-13 2005-03-17   22.014083              72</span></span>
+<span><span class="co">## 3        144  91    13 2005-05-24 2005-08-22   76.584127             198</span></span>
+<span><span class="co">## 4        236  40    14 2005-08-24 2005-10-02   39.072879             251</span></span>
+<span><span class="co">## 5        278 137    15 2005-10-05 2006-02-18   37.219533             382</span></span>
+<span><span class="co">## 6        518  88    24 2006-06-02 2006-08-28  106.801695             573</span></span>
+<span><span class="co">## 7        646  43    29 2006-10-08 2006-11-19   20.232584             666</span></span>
+<span><span class="co">## 8        825  43    49 2007-04-05 2007-05-17   46.022031             851</span></span>
+<span><span class="co">## 9        978  23    65 2007-09-05 2007-09-27   19.154034             990</span></span>
+<span><span class="co">## 10      1001  45    66 2007-09-28 2007-11-11   31.778082            1019</span></span>
+<span><span class="co">## 11      1075  27    69 2007-12-11 2008-01-06   10.759122            1098</span></span>
+<span><span class="co">## 12      1134  23    72 2008-02-08 2008-03-01    5.028310            1151</span></span>
+<span><span class="co">## 13      1217 205    80 2008-05-01 2008-11-21  123.280649            1318</span></span>
+<span><span class="co">## 14      1436  63    82 2008-12-06 2009-02-06   15.863117            1449</span></span>
+<span><span class="co">## 15      1503  20    84 2009-02-11 2009-03-02   11.271995            1517</span></span>
+<span><span class="co">## 16      1572  23    90 2009-04-21 2009-05-13   16.475135            1577</span></span>
+<span><span class="co">## 17      1597 286    91 2009-05-16 2010-02-25  153.669072            1741</span></span>
+<span><span class="co">## 18      1922  30    94 2010-04-06 2010-05-05   39.106875            1945</span></span>
+<span><span class="co">## 19      1998 186    98 2010-06-21 2010-12-23  117.693244            2028</span></span>
+<span><span class="co">## 20      2286  65   105 2011-04-05 2011-06-08   37.333746            2322</span></span>
+<span><span class="co">## 21      2361  25   107 2011-06-19 2011-07-13   39.448022            2378</span></span>
+<span><span class="co">## 22      2396  43   110 2011-07-24 2011-09-04   34.688899            2436</span></span>
+<span><span class="co">## 23      2454  20   112 2011-09-20 2011-10-09   30.211974            2469</span></span>
+<span><span class="co">## 24      2484  48   114 2011-10-20 2011-12-06   22.007549            2526</span></span>
+<span><span class="co">## 25      2584  31   123 2012-01-28 2012-02-27   11.610848            2609</span></span>
+<span><span class="co">## 26      2747  92   138 2012-07-09 2012-10-08   71.835714            2790</span></span>
+<span><span class="co">## 27      2929  24   148 2013-01-07 2013-01-30   11.648926            2950</span></span>
+<span><span class="co">## 28      2959  31   150 2013-02-06 2013-03-08   18.555859            2985</span></span>
+<span><span class="co">## 29      3085 148   163 2013-06-12 2013-11-06  127.542176            3171</span></span>
+<span><span class="co">## 30      3251  25   168 2013-11-25 2013-12-19   11.041014            3271</span></span>
+<span><span class="co">## 31      3350  25   180 2014-03-04 2014-03-28   12.542856            3367</span></span>
+<span><span class="co">## 32      3435  64   186 2014-05-28 2014-07-30   86.621857            3474</span></span>
+<span><span class="co">## 33      3515  37   191 2014-08-16 2014-09-21   25.587160            3524</span></span>
+<span><span class="co">## 34      3552  26   192 2014-09-22 2014-10-17   15.612616            3569</span></span>
+<span><span class="co">## 35      3610  26   198 2014-11-19 2014-12-14   12.422168            3631</span></span></code></pre>
+<p>You can for example plot the distribution of event (instance) length
+(here in days):</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">len</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html" class="external-link">after_stat</a></span><span class="op">(</span><span class="va">count</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"black"</span>, fill <span class="op">=</span> <span class="st">"grey60"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Event length (d)"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</span></span></code></pre>
+<p><img src="cwd_example_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="extreme-value-statistics">Extreme value statistics<a class="anchor" aria-label="anchor" href="#extreme-value-statistics"></a>
 </h2>
 <p>Get annual maxima and fit a general extreme value distribution using
 the {extRemes} package.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html" class="external-link">year</a></span><span class="op">(</span><span class="va">date_start</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>deficit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">deficit</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>deficit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">max_deficit</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">deficit</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">evd_gev</span> <span class="op">&lt;-</span> <span class="fu">extRemes</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/extRemes/man/fevd.html" class="external-link">fevd</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">vals</span>, type <span class="op">=</span> <span class="st">"GEV"</span>, method <span class="op">=</span> <span class="st">"MLE"</span>, units <span class="op">=</span> <span class="st">"years"</span><span class="op">)</span></span>
@@ -259,7 +319,7 @@ the {extRemes} package.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##  BIC = 106.0443</span></span></code></pre>
 <p>Get CWD magnitudes for given return periods.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">return_period</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">30</span>, <span class="fl">40</span>, <span class="fl">50</span>, <span class="fl">60</span>, <span class="fl">70</span>, <span class="fl">80</span>, <span class="fl">90</span>, <span class="fl">100</span>, <span class="fl">120</span>, <span class="fl">200</span>, <span class="fl">250</span>, <span class="fl">300</span>, <span class="fl">500</span>, <span class="fl">800</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">return_level</span> <span class="op">&lt;-</span> <span class="fu">extRemes</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/extRemes/man/return.level.html" class="external-link">return.level</a></span><span class="op">(</span></span>
@@ -277,10 +337,10 @@ the {extRemes} package.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Return period (yr)"</span>, </span>
 <span>       y <span class="op">=</span> <span class="st">"Magnitude of annual CWD maximum (mm)"</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"GEV"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cwd_example_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="cwd_example_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="700"></p>
 <p>With a Gumbel extreme value distribution, the return period as a
 function of the CWD extreme magnitude is calculated as follows:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit Gumbel distribution</span></span>
 <span><span class="va">evd_gumbi</span> <span class="op">&lt;-</span> <span class="fu">extRemes</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/extRemes/man/fevd.html" class="external-link">fevd</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">vals</span>, type <span class="op">=</span> <span class="st">"Gumbel"</span>, method <span class="op">=</span> <span class="st">"MLE"</span>, units <span class="op">=</span> <span class="st">"years"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">evd_gumbi</span><span class="op">)</span></span></code></pre></div>
@@ -309,7 +369,7 @@ function of the CWD extreme magnitude is calculated as follows:</p>
 <span><span class="co">##  AIC = 104.5307 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  BIC = 105.1359</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate return period as a function of the CWD extreme. Using the two </span></span>
 <span><span class="co"># coefficients of the fitted distribution as arguments</span></span>
 <span><span class="va">calc_return_period</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">loc</span>, <span class="va">scale</span><span class="op">)</span><span class="op">{</span></span>
@@ -362,8 +422,8 @@ function of the CWD extreme magnitude is calculated as follows:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Return period (yr)"</span>, </span>
 <span>       y <span class="op">=</span> <span class="st">"Magnitude of annual CWD maximum (mm)"</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Gumbel"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cwd_example_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<p><img src="cwd_example_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Return period for a given CWD extreme (calculated based on function above)</span></span>
 <span><span class="va">df_return</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">return_level</span>, <span class="va">myreturn_period</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -371,16 +431,16 @@ function of the CWD extreme magnitude is calculated as follows:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Return period (yr)"</span>, </span>
 <span>       x <span class="op">=</span> <span class="st">"Magnitude of annual CWD maximum (mm)"</span>,</span>
 <span>       title <span class="op">=</span> <span class="st">"Gumbel"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cwd_example_files/figure-html/unnamed-chunk-14-2.png" class="r-plt" alt="" width="700"></p>
+<p><img src="cwd_example_files/figure-html/unnamed-chunk-17-2.png" class="r-plt" alt="" width="700"></p>
 <p>Visualise the estimated event size with a return period of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>=</mo><mn>80</mn></mrow><annotation encoding="application/x-tex">T = 80</annotation></semantics></math>
 y as the red line on top of the distribution of cumulative water deficit
 events.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span>,</span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">deficit</span>, y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html" class="external-link">after_stat</a></span><span class="op">(</span><span class="va">density</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">max_deficit</span>, y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes_eval.html" class="external-link">after_stat</a></span><span class="op">(</span><span class="va">density</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    color <span class="op">=</span> <span class="st">"black"</span>,</span>
 <span>    position<span class="op">=</span><span class="st">"identity"</span>,</span>
 <span>    bins <span class="op">=</span> <span class="fl">6</span></span>
@@ -390,7 +450,7 @@ events.</p>
 <span>               <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">return_period</span> <span class="op">==</span> <span class="fl">80</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>               <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">return_level</span><span class="op">)</span>,</span>
 <span>             col <span class="op">=</span> <span class="st">"tomato"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cwd_example_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="cwd_example_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="time-stepping">Time stepping<a class="anchor" aria-label="anchor" href="#time-stepping"></a>
@@ -398,7 +458,7 @@ events.</p>
 <p>The data frame used above contains time series with daily resolution.
 The CWD algorithm can also be applied to data provided at other time
 steps. It primarily acts on the <em>rows</em> in the data frame.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wdf</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>year <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html" class="external-link">year</a></span><span class="op">(</span><span class="va">TIMESTAMP</span><span class="op">)</span>,</span>
 <span>         week <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/week.html" class="external-link">week</a></span><span class="op">(</span><span class="va">TIMESTAMP</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -413,15 +473,16 @@ steps. It primarily acts on the <em>rows</em> in the data frame.</p>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Use `summarise(.groups = "drop_last")` to silence this message.</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Use `summarise(.by = c(year, week))` for per-operation grouping</span></span>
 <span><span class="co">##   (`?dplyr::dplyr_by`) instead.</span></span></code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">out_cwd_weekly</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cwd.html">cwd</a></span><span class="op">(</span><span class="va">wdf</span>,</span>
-<span>               varname_wbal <span class="op">=</span> <span class="st">"wbal"</span>,</span>
-<span>               varname_date <span class="op">=</span> <span class="st">"date"</span>,</span>
-<span>               thresh_terminate <span class="op">=</span> <span class="fl">0.0</span>,</span>
-<span>               thresh_drop <span class="op">=</span> <span class="fl">0.0</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">out_cwd_weekly</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cwd.html">cwd</a></span><span class="op">(</span></span>
+<span>  <span class="va">wdf</span>,</span>
+<span>  varname_wbal <span class="op">=</span> <span class="st">"wbal"</span>,</span>
+<span>  varname_date <span class="op">=</span> <span class="st">"date"</span>,</span>
+<span>  thresh_drop <span class="op">=</span> <span class="fl">0.0</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p>Plot weekly CWD time series in green (Daily CWD time series are
 plotted by the red line.)</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html" class="external-link">geom_rect</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">out_cwd_weekly</span><span class="op">$</span><span class="va">inst</span>,</span>
@@ -433,7 +494,7 @@ plotted by the red line.)</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">170</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Date"</span>, y <span class="op">=</span> <span class="st">"Cumulative water deficit (mm)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="cwd_example_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="cwd_example_files/figure-html/unnamed-chunk-20-1.png" class="r-plt" alt="" width="700"></p>
 </div>
   </div>
 
