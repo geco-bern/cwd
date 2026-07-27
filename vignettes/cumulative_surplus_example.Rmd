@@ -18,7 +18,6 @@ library(readr)
 library(dplyr)
 library(lubridate)
 library(patchwork)
-library(extRemes)
 library(ggplot2)
 library(cwd)
 ```
