@@ -25,7 +25,7 @@ maximum CWD attained during the same event.'><meta name="twitter:card" content="
         <a class="external-link hidden-md hidden-lg" href="https://geco-group.org/">
           <img src="https://raw.githubusercontent.com/computationales/GECO_template/main/geco_logo_white_small.png" id="hexlogo" alt="GECO"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>cwd <small>v2.0</small></i>
+           <i>cwd <small>v3.0.0</small></i>
         </a>
       </div>
     </div>
@@ -56,7 +56,7 @@ maximum CWD attained during the same event.'><meta name="twitter:card" content="
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Cumulative water deficit</h1>
-    <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/pkgdown-v2.0/R/cwd.R" class="external-link"><code>R/cwd.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/main/R/cwd.R" class="external-link"><code>R/cwd.R</code></a></small>
     <div class="hidden name"><code>cwd.Rd</code></div>
     </div>
 
@@ -73,10 +73,9 @@ maximum CWD attained during the same event.</p>
 <span>  <span class="va">df</span>,</span>
 <span>  <span class="va">varname_wbal</span>,</span>
 <span>  <span class="va">varname_date</span>,</span>
-<span>  thresh_terminate <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  thresh_terminate_absolute <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  thresh_drop <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span>  doy_reset <span class="op">=</span> <span class="fl">999</span></span>
+<span>  thresh_drop <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  doy_reset <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  do_surplus <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,18 +95,6 @@ maximum CWD attained during the same event.</p>
 <dd><p>name of the variable representing information about the date (format irrelevant)</p></dd>
 
 
-<dt id="arg-thresh-terminate">thresh_terminate<a class="anchor" aria-label="anchor" href="#arg-thresh-terminate"></a></dt>
-<dd><p>threshold determining the level, relative to maximum CWD attained
-during the same event, to which a CWD has to be reduced to terminate the event. Defaults to 0,
-meaning that the CWD has to be fully compensated by water infiltration into the soil to terminate
-a CWD event.</p></dd>
-
-
-<dt id="arg-thresh-terminate-absolute">thresh_terminate_absolute<a class="anchor" aria-label="anchor" href="#arg-thresh-terminate-absolute"></a></dt>
-<dd><p>threshold determining end of event, as <code>thresh_terminate</code> but in absolute terms
-(in the same units as <code>varname_wbal</code> is provided in).</p></dd>
-
-
 <dt id="arg-thresh-drop">thresh_drop<a class="anchor" aria-label="anchor" href="#arg-thresh-drop"></a></dt>
 <dd><p>Level, relative to the CWD maximum of the same event, after which all data
 during the remainder of the event is set to missing values. This is to avoid interpreting data
@@ -115,7 +102,14 @@ after rain events but before full compensation of CWD. Defaults to 0.9.</p></dd>
 
 
 <dt id="arg-doy-reset">doy_reset<a class="anchor" aria-label="anchor" href="#arg-doy-reset"></a></dt>
-<dd><p>Day-of-year (integer) when deficit is to be reset to zero each year.</p></dd>
+<dd><p>Day-of-year (integer) when deficit is to be reset to zero each year. Defaults to
+<code>NA</code> (not considered). If <code>doy_reset</code> is set to a non-NA value, it overrides event termination
+criteria given by <code>thresh_terminate</code> or <code>thresh_terminate_absolute</code>.</p></dd>
+
+
+<dt id="arg-do-surplus">do_surplus<a class="anchor" aria-label="anchor" href="#arg-do-surplus"></a></dt>
+<dd><p>A logical specifying whether the cumulative surplus should be calculated.
+Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div id="details">

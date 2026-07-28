@@ -22,7 +22,7 @@ https://www.jstor.org/stable/24914341"><meta name="twitter:card" content="summar
         <a class="external-link hidden-md hidden-lg" href="https://geco-group.org/">
           <img src="https://raw.githubusercontent.com/computationales/GECO_template/main/geco_logo_white_small.png" id="hexlogo" alt="GECO"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>cwd <small>v2.0</small></i>
+           <i>cwd <small>v3.0.0</small></i>
         </a>
       </div>
     </div>
@@ -53,7 +53,7 @@ https://www.jstor.org/stable/24914341"><meta name="twitter:card" content="summar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Simulate snow mass</h1>
-    <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/pkgdown-v2.0/R/simulate_snow.R" class="external-link"><code>R/simulate_snow.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/main/R/simulate_snow.R" class="external-link"><code>R/simulate_snow.R</code></a></small>
     <div class="hidden name"><code>simulate_snow.Rd</code></div>
     </div>
 
@@ -74,7 +74,9 @@ https://www.jstor.org/stable/24914341</p>
 <dd><p>A data frame containing columns for air temperature (deg. C),
 precipitation in liquid form (rain, mm d-1), and precipitation in solid form
 (snow water equivalents, mm d-1). The column names of the respective
-variables are provided by the other arguments.</p></dd>
+variables are provided by the other arguments. Data frame must contain at
+least 365 days (i.e. a full year). It can, however, contain more e.g. 400 days,
+i.e. the current year still ongoing.</p></dd>
 
 
 <dt id="arg-varnam-temp">varnam_temp<a class="anchor" aria-label="anchor" href="#arg-varnam-temp"></a></dt>
