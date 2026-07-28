@@ -40,15 +40,9 @@ cwd <- function(
   doy_reset = NA,
   do_surplus = FALSE
 ) {
-
-  # create day-of-year column
+  # Keep data-frame and date handling in R so the public API and column classes
+  # remain unchanged. The computational event scans are performed in C++.
   df$doy <- as.integer(format(df[[varname_date]], "%j"))
-
-  inst <- tibble::tibble()
-  idx <- 0
-  iinst <- 1
-  idx_max_deficit <- 0
-
   df <- df |>
     dplyr::ungroup() |>
     dplyr::mutate(
@@ -60,226 +54,64 @@ cwd <- function(
       surplus = 0
     )
 
-  ## Cumulate deficit ----------------------------------------------------------
-  # search all dates
-  while (idx <= (nrow(df) - 1)) {
+  core <- cwd_deficit_cpp(
+    as.numeric(df[[varname_wbal]]),
+    df$doy,
+    thresh_drop,
+    doy_reset
+  )
+  df$iinst <- core$iinst
+  df$dday <- core$dday
+  df$deficit <- core$deficit
 
-    # increment row index for data frame df
-    idx <- idx + 1
-
-    # if the water balance (prec - et) is negative, start accumulating deficit
-    # cumulative negative water balances (deficits)
-    if (df[[varname_wbal]][idx] < 0) {
-      dday <- 0
-      deficit <- 0
-      max_deficit <- 0
-      iidx <- idx
-      found_dropday <- FALSE
-
-      while (
-        # avoid going over row length
-        iidx <= (nrow(df) - 1) &&
-
-        # Ensure deficit is positive
-        (deficit >= 0)
-
-      ) {
-
-        # update
-        dday <- dday + 1
-        deficit <- deficit - df[[varname_wbal]][iidx]
-
-        # Immediately stop if deficit falls below zero # NOTE: why is this needed?
-        if (deficit < 0) {
-          # Before exiting still record the date of the drop
-          iidx_drop <- iidx + 1
-          found_dropday <- TRUE
-          break # Exit the loop if deficit is no longer positive
-        }
-
-        # record the maximum deficit attained in this event
-        if (deficit > max_deficit) {
-          # deficit continues increasing
-          max_deficit <- deficit
-          idx_max_deficit <- iidx
-          found_dropday <- FALSE
-        }
-
-        # record the day when deficit falls below (thresh_drop) times the current maximum deficit
-        if (deficit < (max_deficit * thresh_drop) && !found_dropday) {
-          iidx_drop <- iidx
-          found_dropday <- TRUE
-        }
-
-        # once deficit has fallen below threshold, all subsequent dates are dropped (dday set to NA)
-        if (found_dropday) {
-          df$iinst[iidx] <- NA
-          df$dday[iidx] <- NA
-        } else {
-          df$iinst[iidx] <- iinst
-          df$dday[iidx] <- dday
-          iidx_drop <- iidx
-        }
-
-        df$deficit[iidx] <- deficit
-
-        # stop accumulating on re-set day
-        if (!is.na(doy_reset)){
-          if (df$doy[iidx] == doy_reset) {
-            if (!found_dropday){
-              iidx_drop <- iidx + 1 # +1 since we break loop
-            }
-            break
-          }
-        }
-
-        iidx <- iidx + 1
-      }
-
-      # record instance
-      this_inst <- data.frame(
-        idx_start = idx,
-        len = iidx_drop - idx,
-        iinst = iinst,
-        date_start = df[[varname_date]][idx],
-        date_end = df[[varname_date]][iidx_drop - 1],
-        max_deficit = max_deficit,
-        idx_max_deficit = idx_max_deficit
-      )
-
-      inst <- rbind(inst, this_inst)
-
-      # update
-      iinst <- iinst + 1
-      dday <- 0
-      idx <- iidx
-    }
+  events <- core$events
+  if (nrow(events) == 0L) {
+    inst <- tibble::tibble()
+  } else {
+    inst <- data.frame(
+      idx_start = as.numeric(events$idx_start),
+      len = as.numeric(events$len),
+      iinst = as.numeric(events$iinst),
+      date_start = df[[varname_date]][events$idx_start],
+      date_end = df[[varname_date]][events$date_end_idx],
+      max_deficit = events$max_deficit,
+      idx_max_deficit = as.numeric(events$idx_max_deficit)
+    )
   }
 
-  ## Cumulate surplus ----------------------------------------------------------
-  if (do_surplus){
-    inst_surplus <- tibble::tibble()
-    idx <- 0
-    iinst <- 1
-    idx_max_surplus <- 0
-
-    # retain largest deficit events by year
-    # inst_ann <- inst |>
-    #   # take only annual maxima
-    #   mutate(year = lubridate::year(date_start)) |>
-    #   group_by(year) |>
-    #   filter(max_deficit == max(max_deficit, na.rm = TRUE)) |>
-    #   ungroup()
-
-    # faster option for the same as above
+  if (do_surplus) {
     year <- as.POSIXlt(inst$date_start)$year
     jdx <- tapply(
       seq_len(nrow(inst)),
       year,
       \(i) i[which.max(inst$max_deficit[i])]
       )
-
     inst_ann <- inst[unlist(jdx), ]
+    surplus_core <- cwd_surplus_cpp(
+      as.numeric(df[[varname_wbal]]),
+      inst_ann$idx_max_deficit
+    )
+    df$iinst_surplus <- surplus_core$iinst_surplus
+    df$dday_surplus <- surplus_core$dday_surplus
+    df$surplus <- surplus_core$surplus
 
-    # search all dates
-    while (idx <= (nrow(df) - 1)) {
-
-      # increment row index for data frame df
-      idx <- idx + 1
-
-      # if the water balance (prec - et) is positive, start accumulating surplus
-      if (df[[varname_wbal]][idx] > 0) {
-        dday <- 0
-        surplus <- 0
-        max_surplus <- 0
-        iidx <- idx
-        found_dropday <- FALSE
-        idx_start <- idx
-
-        while (
-          # avoid going over row length
-          iidx <= (nrow(df) - 1) &&
-
-          # Ensure surplus is positive
-          (surplus >= 0)
-
-        ) {
-
-          # update
-          dday <- dday + 1
-          surplus <- surplus + df[[varname_wbal]][iidx]
-
-          # Immediately stop if surplus falls below zero
-          if (surplus < 0) {
-            idx_end <- iidx
-            break # Exit the loop if surplus is no longer positive
-          }
-
-          # record the maximum surplus attained in this event
-          if (surplus > max_surplus) {
-            # surplus continues increasing
-            max_surplus <- surplus
-            idx_max_surplus <- iidx
-          }
-
-          df$iinst_surplus[iidx] <- iinst
-          df$dday_surplus[iidx] <- dday
-          df$surplus[iidx] <- surplus
-
-          # stop accumulating when max deficit of preceding deficit event was attained
-          tmp <- inst_ann |>
-            # identify preceding deficit event
-            dplyr::filter(idx_max_deficit <= iidx) |>
-            dplyr::slice_tail(n = 1)
-
-          if (nrow(tmp) > 0){
-            # get day (index) when maximum deficit was attained
-            idx_max_deficit <- tmp |>
-              dplyr::pull(idx_max_deficit)
-
-            # exit surplus accumulation
-            if (iidx == idx_max_deficit){
-              idx_end <- iidx
-              break
-            }
-          }
-
-          iidx <- iidx + 1
-        }
-
-        # record instance
-        this_inst <- data.frame(
-          idx_start = idx,
-          len = idx_end - idx,
-          iinst = iinst,
-          date_start = df[[varname_date]][idx_start],
-          date_end = df[[varname_date]][idx_end],
-          max_surplus = max_surplus,
-          idx_max_surplus = idx_max_surplus
-        )
-
-        inst_surplus <- rbind(inst_surplus, this_inst)
-
-        # update
-        iinst <- iinst + 1
-        dday <- 0
-        idx <- iidx
-      }
+    surplus_events <- surplus_core$events
+    if (nrow(surplus_events) == 0L) {
+      inst_surplus <- tibble::tibble()
+    } else {
+      inst_surplus <- data.frame(
+        idx_start = as.numeric(surplus_events$idx_start),
+        len = as.numeric(surplus_events$len),
+        iinst = as.numeric(surplus_events$iinst),
+        date_start = df[[varname_date]][surplus_events$idx_start],
+        date_end = df[[varname_date]][surplus_events$idx_end],
+        max_surplus = surplus_events$max_surplus,
+        idx_max_surplus = as.numeric(surplus_events$idx_max_surplus)
+      )
     }
-    return(
-      list(
-        inst = inst,
-        df = df,
-        inst_surplus = inst_surplus
-      )
-    )
-  } else {
-    return(
-      list(
-        inst = inst,
-        df = df
-      )
-    )
+
+    return(list(inst = inst, df = df, inst_surplus = inst_surplus))
   }
 
+  list(inst = inst, df = df)
 }
