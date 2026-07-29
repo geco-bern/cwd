@@ -1,4 +1,7 @@
-# cwd (development version)
+# cwd 3.0.1
+
+## Internal
+* Refactored internal code for faster code execution (C++ instead of R).
 
 # cwd 3.0.0
 
