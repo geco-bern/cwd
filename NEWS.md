@@ -1,4 +1,5 @@
-# cwd (development version)
+# cwd 3.0.2
+* Fix: bug where deficit of last time step was uninitialised (zero).
 
 # cwd 3.0.1
 
