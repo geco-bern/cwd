@@ -122,7 +122,7 @@ test_that("cwd is possible for partial year (with at least one full year for sno
 })
 
 
-test_that("cwd drought event that is terminated by doy_reset instead of a drop", {
+test_that("cwd drought event that is terminated by doy_reset instead of a drop (and surplus)", {
   # constructive::construct(vars_df2, opts_tbl_df(constructor = c("tribble", "tribble", "next", "list")))
   # example from ERA5-Land that raised an error
   vars_df2 <- tidyr::tribble(
@@ -504,7 +504,8 @@ test_that("cwd drought event that is terminated by doy_reset instead of a drop",
       varname_wbal = "wbal",
       varname_date = "date",
       thresh_drop = 0.0,    # set to 0 as we do not want remove days after deficit release
-      doy_reset= day_of_year
+      doy_reset= day_of_year,
+      do_surplus = TRUE
   )
   expect_equal(nrow(out$inst), 17)
   expect_equal(sum(!is.na(out$df$iinst)), 315)
@@ -512,4 +513,39 @@ test_that("cwd drought event that is terminated by doy_reset instead of a drop",
   expect_equal(as.character(out$inst$date_start[which.max(out$inst$max_deficit)]), "2025-01-01")
   expect_equal(as.character(out$inst$date_end[which.max(out$inst$max_deficit)]),   "2025-07-01")
 
+  #idx = sort(sample(1:365, 8)); dput(idx)
+  idx = c(13L, 59L, 90L, 151L, 205L, 218L, 239L, 263L)
+  expect_equal(
+    out$df$deficit[idx],
+    c(57.4841486093241,263.499746702467,393.59139241847,454.184299893075,0,0,29.6448979386179,0.16919500172627),
+    tolerance = 1e-4)
+
+  # check surplus output
+
+  # dput(out$inst_surplus$max_surplus)
+  expect_equal(
+    out$inst_surplus$max_surplus,
+    c(1.03121246860361, 0.45252811418605, 4.52556982048397, 3.22981056587689,
+      5.61565744016352, 23.316644725235, 742.65746631081),
+    tolerance = 1e-4)
+  expect_equal(
+    out$inst_surplus$idx_max_surplus,
+    c(54, 79, 92, 100, 112, 122, 302)
+  )
+  expect_equal(
+    out$inst_surplus$idx_start,
+    c(53, 78, 92, 100, 112, 116, 137)
+  )
+  expect_equal(
+    out$inst_surplus$len,
+    c(2.0, 2.0, 2.0,  1.0,  2.0, 17.0, -4.0) # TODO: why is this -4.0 ?
+  )
+  expect_equal(
+    out$inst_surplus$date_start,
+    as.Date(c("2025-02-22","2025-03-19","2025-04-02","2025-04-10","2025-04-22","2025-04-26","2025-05-17"))
+  )
+  expect_equal(
+    out$inst_surplus$date_end,
+    as.Date(c("2025-02-24","2025-03-21","2025-04-04","2025-04-11","2025-04-24","2025-05-13","2025-05-13")) # TODO: why is last date -4.0 ?
+  )
 })
