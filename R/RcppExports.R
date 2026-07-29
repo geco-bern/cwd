@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 cwd_deficit_cpp <- function(wbal, doy, thresh_drop, doy_reset = NULL) {
-    .Call('_cwd_cwd_deficit_cpp', PACKAGE = 'cwd', wbal, doy, thresh_drop, doy_reset)
+    .Call(`_cwd_cwd_deficit_cpp`, wbal, doy, thresh_drop, doy_reset)
 }
 
 cwd_surplus_cpp <- function(wbal, annual_max_indices) {
-    .Call('_cwd_cwd_surplus_cpp', PACKAGE = 'cwd', wbal, annual_max_indices)
+    .Call(`_cwd_cwd_surplus_cpp`, wbal, annual_max_indices)
 }
 

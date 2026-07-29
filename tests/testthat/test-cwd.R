@@ -16,11 +16,30 @@ test_that("cwd accumulates deficits on a simple synthetic series", {
   expect_named(out, c("inst", "df"))
   expect_equal(nrow(out$inst), 1)
   expect_equal(out$inst$idx_start, 1)
-  expect_equal(out$inst$len, 2)
+  expect_equal(out$inst$len, 3)
   expect_equal(out$inst$max_deficit, 5)
   expect_equal(out$df$deficit, c(2, 5, 3, 0))
-  expect_equal(out$df$iinst, c(1, 1, 1, NA))
-  expect_equal(out$df$dday, c(1, 2, 3, NA))
+  expect_equal(out$df$iinst, c(1, 1, 1, 1))
+  expect_equal(out$df$dday, c(1, 2, 3, 4))
+})
+
+test_that("cwd updates deficit through the final observation", {
+  df <- data.frame(
+    date = as.Date("2001-01-01") + 0:3,
+    wbal = c(1, -2, -3, -4)
+  )
+
+  out <- cwd(
+    df,
+    varname_wbal = "wbal",
+    varname_date = "date",
+    thresh_drop = 0
+  )
+
+  expect_equal(out$df$deficit, c(0, 2, 5, 9))
+  expect_equal(tail(out$df$deficit, 1), 9)
+  expect_equal(out$inst$max_deficit, 9)
+  expect_equal(out$inst$idx_max_deficit, 4)
 })
 
 test_that("cwd reproduces the bundled vignette workflow", {
@@ -58,7 +77,7 @@ test_that("cwd reproduces the bundled vignette workflow", {
   # ggplot(out$df, aes(x=doy, y=deficit)) + geom_point()
 
   expect_equal(nrow(out$inst), 200)
-  expect_equal(sum(!is.na(out$df$iinst)), 2949)
+  expect_equal(sum(!is.na(out$df$iinst)), 2950)
   expect_equal(max(out$df$deficit, na.rm = TRUE), 153.6691, tolerance = 1e-4)
   expect_equal(as.character(out$inst$date_start[which.max(out$inst$max_deficit)]), "2009-05-16")
 })
@@ -116,7 +135,7 @@ test_that("cwd is possible for partial year (with at least one full year for sno
   #        aes(x=doy, y=deficit, color = year)) + geom_point()
 
   expect_equal(nrow(out$inst), 24)
-  expect_equal(sum(!is.na(out$df$iinst)), 434)
+  expect_equal(sum(!is.na(out$df$iinst)), 435)
   expect_equal(max(out$df$deficit, na.rm = TRUE), 76.58413, tolerance = 1e-4)
   expect_equal(as.character(out$inst$date_start[which.max(out$inst$max_deficit)]), "2005-05-24")
 })
@@ -508,7 +527,7 @@ test_that("cwd drought event that is terminated by doy_reset instead of a drop (
       do_surplus = TRUE
   )
   expect_equal(nrow(out$inst), 17)
-  expect_equal(sum(!is.na(out$df$iinst)), 315)
+  expect_equal(sum(!is.na(out$df$iinst)), 316)
   expect_equal(max(out$df$deficit, na.rm = TRUE), 470.6138, tolerance = 1e-4)
   expect_equal(as.character(out$inst$date_start[which.max(out$inst$max_deficit)]), "2025-01-01")
   expect_equal(as.character(out$inst$date_end[which.max(out$inst$max_deficit)]),   "2025-07-01")

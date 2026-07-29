@@ -24,8 +24,6 @@ List cwd_deficit_cpp(
   const bool reset_enabled = doy_reset.isNotNull();
   const int reset_day = reset_enabled ? as<int>(doy_reset) : NA_INTEGER;
 
-  // The bounds deliberately mirror the original R loops, which leave the
-  // final row outside the event search.
   while (idx <= n - 1) {
     ++idx;
     if (idx > n) break;
@@ -36,7 +34,10 @@ List cwd_deficit_cpp(
       int iidx = idx;
       bool found_dropday = false;
 
-      while (iidx <= n - 1 && deficit >= 0.0) {
+      // Include the final observation. The former `iidx <= n - 1` bound left
+      // the last day's deficit at its initialized value of zero whenever an
+      // event continued through the end of the input.
+      while (iidx <= n && deficit >= 0.0) {
         ++dday;
         deficit -= wbal[iidx - 1];
 
