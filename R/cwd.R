@@ -3,8 +3,10 @@
 #' Derives time series of the cumulative water deficit (CWD), given time series of
 #' the daily soil water balance (infiltration minus evapotranspiration). CWD "events"
 #' are identified as periods of consecutive days where the CWD is positive (a water deficit).
-#' CWD is set to zero after rain has reduced the CWD by a user-defined fraction, relative to
-#' maximum CWD attained during the same event.
+#' An event is stopped and CWD is reset to zero in these cases: 
+#' a) on a specified day-of-year (`doy_reset`), or after rain has reduced the 
+#' CWD b) to 0mm (always active), after rain has reduced the CWD c) to a user-defined 
+#' absolute threshold below the maximum CWD attained during the event (`thresh_reset_absolute`).
 #'
 #' @param df a data frame that contains the variable named according to argument \code{varname_wbal}
 #' @param varname_wbal name of the variable representing the daily soil water balance (infiltration minus evapotranspiration)
@@ -12,9 +14,12 @@
 #' @param thresh_drop Level, relative to the CWD maximum of the same event, after which all data
 #' during the remainder of the event is set to missing values. This is to avoid interpreting data
 #' after rain events but before full compensation of CWD. Defaults to 0.9.
-#' @param doy_reset Day-of-year (integer) when deficit is to be reset to zero each year. Defaults to
+#' @param doy_reset Day-of-year (integer) when CWD is to be reset to zero each year. Defaults to
 #' \code{NA} (not considered). If \code{doy_reset} is set to a non-NA value, it overrides event termination
 #' criteria given by \code{thresh_terminate} or \code{thresh_terminate_absolute}.
+#' @param thresh_terminate_absolute absolute threshold to terminate the event and reset CWD to 0, units are 
+#' in same units as \code{varname_wbal}. The value of this argument determines the amount by which a CWD has 
+#' to be reduced to terminate the event (i.e. level _below_ the maximum CWD attained).
 #' @param do_surplus A logical specifying whether the cumulative surplus should be calculated.
 #' Defaults to \code{FALSE}.
 #'
@@ -38,6 +43,7 @@ cwd <- function(
   varname_date,
   thresh_drop = 0.0,
   doy_reset = NA,
+  thresh_reset_absolute = NA,
   do_surplus = FALSE
 ) {
   # Keep data-frame and date handling in R so the public API and column classes
