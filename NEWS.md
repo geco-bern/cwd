@@ -2,6 +2,7 @@
 * Added back previously removed arguments:
   * argument `thresh_reset_absolute` (i.e. absolute threshold-based event re-setting, 
   same as previous `thresh_terminate_absolute`).
+* Fix: bug where length of deficit instance included day after drop below 0mm
 
 # cwd 3.0.2
 * Fix: bug where deficit of last time step was uninitialised (zero).

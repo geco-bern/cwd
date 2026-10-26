@@ -93,10 +93,10 @@ test_that("cwd resets methods give reasonable results", {
   expect_equal(out_reset_abs10mm$inst$idx_start,     1)
   expect_equal(out_reset_abs20mm$inst$idx_start,     1)
   expect_equal(out_reset_doy8$inst$idx_start,      c(1,9)) # two events: one on day 9 after reset
-  expect_equal(out_reset_0mm$inst$len,              31) # 10 days buildup + 20 days drop for 100mm (+ 1 day)
+  expect_equal(out_reset_0mm$inst$len,              30) # 10 days buildup + 20 days drop for 100mm (+ 1 day)
   expect_equal(out_reset_abs10mm$inst$len,          12) # 10 days buildup + 2 days drop for 10mm
   expect_equal(out_reset_abs20mm$inst$len,          14) # 10 days buildup + 4 days drop for 20mm
-  expect_equal(out_reset_doy8$inst$len,             c(8,7))# 2nd event: 2 days buildup to 20mm + 4 days drop for 20mm (+1 day to be below 0)
+  expect_equal(out_reset_doy8$inst$len,             c(8,6))# 2nd event: 2 days buildup to 20mm + 4 days drop for 20mm (to be below 0)
   expect_equal(out_reset_0mm$inst$max_deficit,     100)
   expect_equal(out_reset_abs10mm$inst$max_deficit, 100)
   expect_equal(out_reset_abs20mm$inst$max_deficit, 100)
