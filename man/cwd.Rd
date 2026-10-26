@@ -39,9 +39,10 @@ Defaults to \code{FALSE}.}
 Derives time series of the cumulative water deficit (CWD), given time series of
 the daily soil water balance (infiltration minus evapotranspiration). CWD "events"
 are identified as periods of consecutive days where the CWD is positive (a water deficit).
-An event is stopped and CWD is reset to zero on a specified day-of-year (\code{doy_reset}), or
-after rain has reduced the CWD to zero or to the user-defined absolute threshold below the maximum
-CWD attained during the event (\code{thresh_reset_absolute}).
+An event is stopped and CWD is reset to zero in these cases:
+a) on a specified day-of-year (\code{doy_reset}), or after rain has reduced the
+CWD b) to 0mm (always active), after rain has reduced the CWD c) to a user-defined
+absolute threshold below the maximum CWD attained during the event (\code{thresh_reset_absolute}).
 }
 \details{
 A list of two data frames (tibbles). \code{inst} contains information about CWD "events".

@@ -8,3 +8,4 @@ cwd_deficit_cpp <- function(wbal, doy, thresh_drop, doy_reset = NULL, thresh_res
 cwd_surplus_cpp <- function(wbal, annual_max_indices) {
     .Call(`_cwd_cwd_surplus_cpp`, wbal, annual_max_indices)
 }
+
