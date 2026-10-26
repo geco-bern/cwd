@@ -21,6 +21,8 @@
 #' (not considered).
 #' @param do_surplus A logical specifying whether the cumulative surplus should be calculated.
 #' Defaults to \code{FALSE}.
+#' @param thresh_terminate_absolute Deprecated argument. Use
+#' \code{thresh_reset_absolute} instead; supplying this argument raises an error.
 #'
 #' @details A list of two data frames (tibbles). \code{inst} contains information about CWD "events".
 #' Each row corresponds to one event. An event is defined as a period of consecutive days where the
@@ -45,8 +47,16 @@ cwd <- function(
   thresh_drop = 0.0,
   doy_reset = NA,
   thresh_reset_absolute = NA,
-  do_surplus = FALSE
+  do_surplus = FALSE,
+  thresh_terminate_absolute = NULL
 ) {
+  if (!missing(thresh_terminate_absolute)) {
+    stop(
+      "`thresh_terminate_absolute` was renamed to `thresh_reset_absolute`; use `thresh_reset_absolute` instead.",
+      call. = FALSE
+    )
+  }
+
   # Keep data-frame and date handling in R so the public API and column classes
   # remain unchanged. The computational event scans are performed in C++.
   df$doy <- as.integer(format(df[[varname_date]], "%j"))

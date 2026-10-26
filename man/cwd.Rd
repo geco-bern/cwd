@@ -11,7 +11,8 @@ cwd(
   thresh_drop = 0,
   doy_reset = NA,
   thresh_reset_absolute = NA,
-  do_surplus = FALSE
+  do_surplus = FALSE,
+  thresh_terminate_absolute = NULL
 )
 }
 \arguments{
@@ -34,6 +35,9 @@ the event to reset it to zero. Units are the same as \code{varname_wbal}. Defaul
 
 \item{do_surplus}{A logical specifying whether the cumulative surplus should be calculated.
 Defaults to \code{FALSE}.}
+
+\item{thresh_terminate_absolute}{Deprecated argument. Use
+\code{thresh_reset_absolute} instead; supplying this argument raises an error.}
 }
 \description{
 Derives time series of the cumulative water deficit (CWD), given time series of
