@@ -51,7 +51,7 @@ test_that("cwd resets methods give reasonable results", {
   )
 
   out_reset_0mm     <- cwd(df, varname_wbal = "wbal", varname_date = "date", thresh_drop = 0, doy_reset = NA)
-  out_reset_doy8    <- cwd(df, varname_wbal = "wbal", varname_date = "date", thresh_drop = 0, doy_reset = 8)
+  out_reset_doy8    <- cwd(df, varname_wbal = "wbal", varname_date = "date", thresh_drop = 0, doy_reset = 8) # Note: unusual to have doy_reset in a dry period
   out_reset_abs10mm <- cwd(df, varname_wbal = "wbal", varname_date = "date", thresh_drop = 0, thresh_reset_absolute = 10)
   out_reset_abs20mm <- cwd(df, varname_wbal = "wbal", varname_date = "date", thresh_drop = 0, thresh_reset_absolute = 20)
 

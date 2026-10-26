@@ -55,12 +55,21 @@ List cwd_deficit_cpp(
 
         // a) check if reset due to drop below 0.0 is needed
         if (deficit < 0.0) {
-          iidx_drop = iidx;
+          iidx_drop = iidx; // do not include last day in instance
           break; // setting found_dropday = true is not needed due to the break
         }
         // b) check if reset due to absolute drop below max_deficit is needed
         if (absolute_reset_enabled && deficit < max_deficit - reset_thresh) {
-          iidx_drop = iidx;
+          iidx_drop = iidx; // do not include last day in instance
+          break;
+        }
+        // c) check if reset due to doy is needed
+        if (reset_enabled && doy[iidx - 1] == reset_day) {
+          iidx_drop = iidx + 1;
+          // If we reset due to doy, always include last day in the instance (even if it might have a thresh_drop)
+          iinst_out[iidx - 1] = instance;
+          dday_out[iidx - 1] = dday;
+          deficit_out[iidx - 1] = deficit;
           break;
         }
 
@@ -81,11 +90,6 @@ List cwd_deficit_cpp(
         }
         deficit_out[iidx - 1] = deficit;
 
-        // c) check if reset due to doy is needed // NOTE: shouldn't this be moved up (just below b) ?
-        if (reset_enabled && doy[iidx - 1] == reset_day) { // NOTE: this reset allows to fill instance property
-          if (!found_dropday) iidx_drop = iidx + 1; // If reset_day does not have a drop, also include it in the instance
-          break;
-        }
         ++iidx;
       }
 
