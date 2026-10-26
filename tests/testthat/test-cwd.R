@@ -45,28 +45,36 @@ test_that("cwd updates deficit through the final observation", {
 test_that("cwd resets methods give reasonable results", {
   df <- data.frame(
     date = as.Date("2001-01-01") + 0:(40-1),
-    #wbal = c(-5, -5, 4, 1, 1)
     #  buildup to 100 mm CWD over 10 days, drop by 150 over 30 days
     wbal = c(-10, -10, -10, -10, -10, -10, -10, -10, -10, -10,
              5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5)
   )
 
+  out_reset_0mm     <- cwd(df, varname_wbal = "wbal", varname_date = "date", thresh_drop = 0, doy_reset = NA)
   out_reset_doy8    <- cwd(df, varname_wbal = "wbal", varname_date = "date", thresh_drop = 0, doy_reset = 8)
   out_reset_abs10mm <- cwd(df, varname_wbal = "wbal", varname_date = "date", thresh_drop = 0, thresh_reset_absolute = 10)
   out_reset_abs20mm <- cwd(df, varname_wbal = "wbal", varname_date = "date", thresh_drop = 0, thresh_reset_absolute = 20)
 
-  # single event: 10 days buildup + 2 days drop for 10mm   OR 4 days drop for 20mm
+  # single event: 10 days buildup + 20 days drop for 10mm  OR 2 days drop for 10mm   OR 4 days drop for 20mm
+  expect_equal(out_reset_0mm$df$deficit,
+               c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 95, 90, 85, 80, 75,  70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5,
+                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
   expect_equal(out_reset_abs10mm$df$deficit,
                c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 95, 90,
                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
   expect_equal(out_reset_abs20mm$df$deficit,
                c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 95, 90, 85, 80,
                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+
   # two events: one from the beginning up to 80mm, then doy_reset, then one event starting on day 9 after reset
   expect_equal(out_reset_doy8$df$deficit,
                c(10, 20, 30, 40, 50, 60, 70, 80, 10, 20, 15, 10, 5,
                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
+  # check instance identifications:
+  expect_equal(out_reset_0mm$df$iinst,
+               c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                 NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)) # dput(out_reset_0mm$df$iinst)
   expect_equal(out_reset_abs10mm$df$iinst,
                c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                  NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
@@ -76,20 +84,23 @@ test_that("cwd resets methods give reasonable results", {
                  NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
                  NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)) # dput(out_reset_abs20mm$df$iinst)
   expect_equal(out_reset_doy8$df$iinst,
-               c(1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2,
+               c(1, 1, 1, 1, 1, 1, 1, 1,
+                 2, 2, 2, 2, 2, 2,
                  NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
                  NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)) # dput(out_reset_doy8$df$iinst)
 
+  expect_equal(out_reset_0mm$inst$idx_start,         1)
   expect_equal(out_reset_abs10mm$inst$idx_start,     1)
   expect_equal(out_reset_abs20mm$inst$idx_start,     1)
   expect_equal(out_reset_doy8$inst$idx_start,      c(1,9)) # two events: one on day 9 after reset
+  expect_equal(out_reset_0mm$inst$len,              31) # 10 days buildup + 20 days drop for 100mm (+ 1 day)
   expect_equal(out_reset_abs10mm$inst$len,          12) # 10 days buildup + 2 days drop for 10mm
   expect_equal(out_reset_abs20mm$inst$len,          14) # 10 days buildup + 4 days drop for 20mm
   expect_equal(out_reset_doy8$inst$len,             c(8,7))# 2nd event: 2 days buildup to 20mm + 4 days drop for 20mm (+1 day to be below 0)
+  expect_equal(out_reset_0mm$inst$max_deficit,     100)
   expect_equal(out_reset_abs10mm$inst$max_deficit, 100)
   expect_equal(out_reset_abs20mm$inst$max_deficit, 100)
   expect_equal(out_reset_doy8$inst$max_deficit,    c(80,20))
-
 })
 
 test_that("cwd reproduces the bundled vignette workflow", {

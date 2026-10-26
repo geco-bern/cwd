@@ -46,25 +46,34 @@ List cwd_deficit_cpp(
         ++dday;
         deficit -= wbal[iidx - 1];
 
-        if (deficit < 0.0) {
-          iidx_drop = iidx + 1;
-          found_dropday = true;
-          break;
-        }
+        // track max deficit attained
         if (deficit > max_deficit) {
           max_deficit = deficit;
           idx_max_deficit = iidx;
           found_dropday = false;
         }
+
+        // a) check if reset due to drop below 0.0 is needed
+        if (deficit < 0.0) {
+          iidx_drop = iidx + 1;
+          break; // setting found_dropday = true is not needed due to the break
+        }
+        // b) check if reset due to absolute drop below max_deficit is needed
         if (absolute_reset_enabled && deficit < max_deficit - reset_thresh) {
           iidx_drop = iidx;
           break;
         }
+
+
+        // if not yet reset (i.e. not break):
+        // check if dropday is found for filling in instance
         if (deficit < max_deficit * thresh_drop && !found_dropday) {
           iidx_drop = iidx;
           found_dropday = true;
         }
 
+        // continue filling in instance properties only while no dropday found
+        // the day of the drop itself is not used
         if (!found_dropday) {
           iinst_out[iidx - 1] = instance;
           dday_out[iidx - 1] = dday;
@@ -72,8 +81,9 @@ List cwd_deficit_cpp(
         }
         deficit_out[iidx - 1] = deficit;
 
-        if (reset_enabled && doy[iidx - 1] == reset_day) {
-          if (!found_dropday) iidx_drop = iidx + 1;
+        // c) check if reset due to doy is needed // NOTE: shouldn't this be moved up (just below b) ?
+        if (reset_enabled && doy[iidx - 1] == reset_day) { // NOTE: this reset allows to fill instance property
+          if (!found_dropday) iidx_drop = iidx + 1; // If reset_day does not have a drop, also include last day
           break;
         }
         ++iidx;
