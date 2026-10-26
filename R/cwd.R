@@ -34,6 +34,8 @@
 #' \code{deficit}: maximum CWD recorded during this event. Units correspond to units of \code{varname_wbal}
 #' in \code{df}.
 #'
+#' @useDynLib cwd, .registration = TRUE
+#' @importFrom Rcpp evalCpp
 #' @export
 #'
 cwd <- function(
