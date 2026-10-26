@@ -40,6 +40,11 @@ vignettes/*.pdf
 /doc/
 /Meta/
 
+# C++ compilation artifacts
+/src/*.o
+/src/*.so
+/src/*.dll
+
 # Folder view configuration files
 .DS_Store
 Desktop.ini
