@@ -10,6 +10,7 @@ cwd(
   varname_date,
   thresh_drop = 0,
   doy_reset = NA,
+  thresh_reset_absolute = NA,
   do_surplus = FALSE
 )
 }
@@ -24,9 +25,12 @@ cwd(
 during the remainder of the event is set to missing values. This is to avoid interpreting data
 after rain events but before full compensation of CWD. Defaults to 0.9.}
 
-\item{doy_reset}{Day-of-year (integer) when deficit is to be reset to zero each year. Defaults to
-\code{NA} (not considered). If \code{doy_reset} is set to a non-NA value, it overrides event termination
-criteria given by \code{thresh_terminate} or \code{thresh_terminate_absolute}.}
+\item{doy_reset}{Day-of-year (integer) when CWD is to be reset to zero each year. Defaults to
+\code{NA} (not considered).}
+
+\item{thresh_reset_absolute}{Amount by which CWD must fall below the maximum CWD attained during
+the event to reset it to zero. Units are the same as \code{varname_wbal}. Defaults to \code{NA}
+(not considered).}
 
 \item{do_surplus}{A logical specifying whether the cumulative surplus should be calculated.
 Defaults to \code{FALSE}.}
@@ -35,8 +39,9 @@ Defaults to \code{FALSE}.}
 Derives time series of the cumulative water deficit (CWD), given time series of
 the daily soil water balance (infiltration minus evapotranspiration). CWD "events"
 are identified as periods of consecutive days where the CWD is positive (a water deficit).
-CWD is set to zero after rain has reduced the CWD by a user-defined fraction, relative to
-maximum CWD attained during the same event.
+An event is stopped and CWD is reset to zero on a specified day-of-year (\code{doy_reset}), or
+after rain has reduced the CWD to zero or to the user-defined absolute threshold below the maximum
+CWD attained during the event (\code{thresh_reset_absolute}).
 }
 \details{
 A list of two data frames (tibbles). \code{inst} contains information about CWD "events".

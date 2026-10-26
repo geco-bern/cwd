@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 using namespace Rcpp;
@@ -10,7 +11,7 @@ List cwd_deficit_cpp(
     IntegerVector doy,
     double thresh_drop,
     Nullable<int> doy_reset = R_NilValue,
-    Nullable<int> thresh_reset_absolute = R_NilValue) {
+    Nullable<double> thresh_reset_absolute = R_NilValue) {
   const int n = wbal.size();
   NumericVector iinst_out(n, NA_REAL);
   NumericVector dday_out(n, NA_REAL);
@@ -25,7 +26,8 @@ List cwd_deficit_cpp(
   const bool reset_enabled = doy_reset.isNotNull();
   const int reset_day = reset_enabled ? as<int>(doy_reset) : NA_INTEGER;
   const bool thres_reset_enabled = thresh_reset_absolute.isNotNull();
-  const int reset_thresh = thres_reset_enabled ? as<int>(thresh_reset_absolute) : NA_INTEGER;
+  const double reset_thresh = thres_reset_enabled ? as<double>(thresh_reset_absolute) : NA_REAL;
+  const bool absolute_reset_enabled = thres_reset_enabled && !std::isnan(reset_thresh);
 
   while (idx <= n - 1) {
     ++idx;
@@ -54,6 +56,10 @@ List cwd_deficit_cpp(
           idx_max_deficit = iidx;
           found_dropday = false;
         }
+        if (absolute_reset_enabled && deficit < max_deficit - reset_thresh) {
+          iidx_drop = iidx;
+          break;
+        }
         if (deficit < max_deficit * thresh_drop && !found_dropday) {
           iidx_drop = iidx;
           found_dropday = true;
@@ -67,8 +73,6 @@ List cwd_deficit_cpp(
         deficit_out[iidx - 1] = deficit;
 
         if (reset_enabled && doy[iidx - 1] == reset_day) {
-          # TODO: add here also thres_reset_enabled and reset_thresh check to reset CWD if it is below the threshold
-          
           if (!found_dropday) iidx_drop = iidx + 1;
           break;
         }

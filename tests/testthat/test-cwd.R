@@ -42,6 +42,27 @@ test_that("cwd updates deficit through the final observation", {
   expect_equal(out$inst$idx_max_deficit, 4)
 })
 
+test_that("cwd resets when the absolute threshold below its maximum is crossed", {
+  df <- data.frame(
+    date = as.Date("2001-01-01") + 0:4,
+    wbal = c(-5, -5, 4, 1, 1)
+  )
+
+  out <- cwd(
+    df,
+    varname_wbal = "wbal",
+    varname_date = "date",
+    thresh_drop = 0,
+    thresh_reset_absolute = 3
+  )
+
+  expect_equal(out$inst$idx_start, 1)
+  expect_equal(out$inst$len, 2)
+  expect_equal(out$inst$max_deficit, 10)
+  expect_equal(out$df$deficit, c(5, 10, 0, 0, 0))
+  expect_equal(out$df$iinst, c(1, 1, NA, NA, NA))
+})
+
 test_that("cwd reproduces the bundled vignette workflow", {
   df <- cwd:::df_CH_LAE
   df <- dplyr::mutate(df, PA_F = 1e3 * PA_F)

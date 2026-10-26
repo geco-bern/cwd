@@ -15,11 +15,10 @@
 #' during the remainder of the event is set to missing values. This is to avoid interpreting data
 #' after rain events but before full compensation of CWD. Defaults to 0.9.
 #' @param doy_reset Day-of-year (integer) when CWD is to be reset to zero each year. Defaults to
-#' \code{NA} (not considered). If \code{doy_reset} is set to a non-NA value, it overrides event termination
-#' criteria given by \code{thresh_terminate} or \code{thresh_terminate_absolute}.
-#' @param thresh_terminate_absolute absolute threshold to terminate the event and reset CWD to 0, units are 
-#' in same units as \code{varname_wbal}. The value of this argument determines the amount by which a CWD has 
-#' to be reduced to terminate the event (i.e. level _below_ the maximum CWD attained).
+#' \code{NA} (not considered).
+#' @param thresh_reset_absolute Amount by which CWD must fall below the maximum CWD attained during
+#' the event to reset it to zero. Units are the same as \code{varname_wbal}. Defaults to \code{NA}
+#' (not considered).
 #' @param do_surplus A logical specifying whether the cumulative surplus should be calculated.
 #' Defaults to \code{FALSE}.
 #'
@@ -64,7 +63,8 @@ cwd <- function(
     as.numeric(df[[varname_wbal]]),
     df$doy,
     thresh_drop,
-    doy_reset
+    doy_reset,
+    thresh_reset_absolute
   )
   df$iinst <- core$iinst
   df$dday <- core$dday

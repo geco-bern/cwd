@@ -11,7 +11,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // cwd_deficit_cpp
-List cwd_deficit_cpp(NumericVector wbal, IntegerVector doy, double thresh_drop, Nullable<int> doy_reset);
+List cwd_deficit_cpp(NumericVector wbal, IntegerVector doy, double thresh_drop, Nullable<int> doy_reset, Nullable<double> thresh_reset_absolute);
 RcppExport SEXP _cwd_cwd_deficit_cpp(SEXP wbalSEXP, SEXP doySEXP, SEXP thresh_dropSEXP, SEXP doy_resetSEXP, SEXP thresh_reset_absoluteSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -20,7 +20,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type doy(doySEXP);
     Rcpp::traits::input_parameter< double >::type thresh_drop(thresh_dropSEXP);
     Rcpp::traits::input_parameter< Nullable<int> >::type doy_reset(doy_resetSEXP);
-    Rcpp::traits::input_parameter< Nullable<int> >::type doy_reset(thresh_reset_absoluteSEXP);
+    Rcpp::traits::input_parameter< Nullable<double> >::type thresh_reset_absolute(thresh_reset_absoluteSEXP);
     rcpp_result_gen = Rcpp::wrap(cwd_deficit_cpp(wbal, doy, thresh_drop, doy_reset, thresh_reset_absolute));
     return rcpp_result_gen;
 END_RCPP
