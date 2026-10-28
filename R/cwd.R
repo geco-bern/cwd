@@ -3,20 +3,33 @@
 #' Derives time series of the cumulative water deficit (CWD), given time series of
 #' the daily soil water balance (infiltration minus evapotranspiration). CWD "events"
 #' are identified as periods of consecutive days where the CWD is positive (a water deficit).
-#' CWD is set to zero after rain has reduced the CWD by a user-defined fraction, relative to
-#' maximum CWD attained during the same event.
+#' An event ends and CWD resets to zero when:
+#' a) on a specified day-of-year (`doy_reset`),
+#' or b) when CWD falls below 0mm (always active),
+#' or c) when CWD falls more than `thresh_reset_absolute` below the event peak,
+#' or d) when CWD falls below `thresh_reset_relative` times the event peak.
 #'
 #' @param df a data frame that contains the variable named according to argument \code{varname_wbal}
 #' @param varname_wbal name of the variable representing the daily soil water balance (infiltration minus evapotranspiration)
 #' @param varname_date name of the variable representing information about the date (format irrelevant)
 #' @param thresh_drop Level, relative to the CWD maximum of the same event, after which all data
 #' during the remainder of the event is set to missing values. This is to avoid interpreting data
-#' after rain events but before full compensation of CWD. Defaults to 0.9.
-#' @param doy_reset Day-of-year (integer) when deficit is to be reset to zero each year. Defaults to
-#' \code{NA} (not considered). If \code{doy_reset} is set to a non-NA value, it overrides event termination
-#' criteria given by \code{thresh_terminate} or \code{thresh_terminate_absolute}.
+#' after rain events but before full compensation of CWD. Defaults to 0.
+#' @param doy_reset Day-of-year (integer) when CWD is to be reset to zero each year. Defaults to
+#' \code{NA} (not considered).
+#' @param thresh_reset_absolute Amount by which CWD must fall below the maximum CWD attained during
+#' the event to end the event and reset CWD to zero. Units are the same as \code{varname_wbal}. Defaults to \code{NA}
+#' (not considered).
+#' @param thresh_reset_relative Fraction of the event's peak by which CWD must fall
+#' to end the event and reset CWD to zero. Must be between 0 and 1. For example, \code{0.1}
+#' terminates an event once CWD falls by 10 percent, i.e. below 90 percent of its peak.
+#' Defaults to \code{NA} (not considered). Cannot be combined with \code{thresh_reset_absolute}.
 #' @param do_surplus A logical specifying whether the cumulative surplus should be calculated.
 #' Defaults to \code{FALSE}.
+#' @param thresh_terminate_absolute Deprecated argument. Use
+#' \code{thresh_reset_absolute} instead; supplying this argument raises an error.
+#' @param thresh_terminate_relative Deprecated argument. Use
+#' \code{thresh_reset_relative} instead; supplying this argument raises an error.
 #'
 #' @details A list of two data frames (tibbles). \code{inst} contains information about CWD "events".
 #' Each row corresponds to one event. An event is defined as a period of consecutive days where the
@@ -27,9 +40,11 @@
 #' \code{iinst}: event number
 #' \code{date_start}: starting date of the event, formatted as \code{varname_date} in \code{df}.
 #' \code{date_end}: end date of the event, formatted as \code{varname_date} in \code{df}.
-#' \code{deficit}: maximum CWD recorded during this event. Units correspond to units of \code{varname_wbal}
+#' \code{max_deficit}: maximum CWD recorded during this event. Units correspond to units of \code{varname_wbal}
 #' in \code{df}.
 #'
+#' @useDynLib cwd, .registration = TRUE
+#' @importFrom Rcpp evalCpp
 #' @export
 #'
 cwd <- function(
@@ -38,8 +53,38 @@ cwd <- function(
   varname_date,
   thresh_drop = 0.0,
   doy_reset = NA,
-  do_surplus = FALSE
+  thresh_reset_absolute = NA,
+  thresh_reset_relative = NA_real_,
+  do_surplus = FALSE,
+  thresh_terminate_absolute = NULL,
+  thresh_terminate_relative = NULL
 ) {
+  if (!missing(thresh_terminate_absolute)) {
+    stop(
+      "`thresh_terminate_absolute` was renamed to `thresh_reset_absolute`; use `thresh_reset_absolute` instead.",
+      call. = FALSE
+    )
+  }
+  if (!missing(thresh_terminate_relative)) {
+    stop(
+      "`thresh_terminate_relative` was renamed to `thresh_reset_relative`; use `thresh_reset_relative` instead.",
+      call. = FALSE
+    )
+  }
+
+  relative_valid <- length(thresh_reset_relative) == 1L &&
+    is.numeric(thresh_reset_relative) &&
+    is.finite(thresh_reset_relative) &&
+    thresh_reset_relative >= 0 && thresh_reset_relative <= 1
+  if (relative_valid || is.na(thresh_reset_relative)) {
+    # good
+  } else {
+    stop("`thresh_reset_relative` must be a single number between 0 and 1, or NA.", call. = FALSE)
+  }
+  if (relative_valid && !is.na(thresh_reset_absolute)) {
+    stop("Supply only one of `thresh_reset_absolute` and `thresh_reset_relative`.", call. = FALSE)
+  }
+
   # Keep data-frame and date handling in R so the public API and column classes
   # remain unchanged. The computational event scans are performed in C++.
   df$doy <- as.integer(format(df[[varname_date]], "%j"))
@@ -58,7 +103,9 @@ cwd <- function(
     as.numeric(df[[varname_wbal]]),
     df$doy,
     thresh_drop,
-    doy_reset
+    doy_reset,
+    thresh_reset_absolute,
+    thresh_reset_relative
   )
   df$iinst <- core$iinst
   df$dday <- core$dday

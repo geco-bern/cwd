@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 using namespace Rcpp;
@@ -9,7 +10,9 @@ List cwd_deficit_cpp(
     NumericVector wbal,
     IntegerVector doy,
     double thresh_drop,
-    Nullable<int> doy_reset = R_NilValue) {
+    Nullable<int> doy_reset = R_NilValue,
+    Nullable<double> thresh_reset_absolute = R_NilValue,
+    Nullable<double> thresh_reset_relative = R_NilValue) {
   const int n = wbal.size();
   NumericVector iinst_out(n, NA_REAL);
   NumericVector dday_out(n, NA_REAL);
@@ -23,6 +26,12 @@ List cwd_deficit_cpp(
   int iidx_drop = 0;
   const bool reset_enabled = doy_reset.isNotNull();
   const int reset_day = reset_enabled ? as<int>(doy_reset) : NA_INTEGER;
+  const bool thres_reset_abs_enabled = thresh_reset_absolute.isNotNull();
+  const bool thres_reset_rel_enabled = thresh_reset_relative.isNotNull();
+  const double reset_abs_thresh = thres_reset_abs_enabled ? as<double>(thresh_reset_absolute) : NA_REAL;
+  const double reset_rel_thresh = thres_reset_rel_enabled ? as<double>(thresh_reset_relative) : NA_REAL;
+  const bool absolute_reset_enabled = thres_reset_abs_enabled && !std::isnan(reset_abs_thresh);
+  const bool relative_reset_enabled = thres_reset_rel_enabled && !std::isnan(reset_rel_thresh);
 
   while (idx <= n - 1) {
     ++idx;
@@ -41,21 +50,49 @@ List cwd_deficit_cpp(
         ++dday;
         deficit -= wbal[iidx - 1];
 
-        if (deficit < 0.0) {
-          iidx_drop = iidx + 1;
-          found_dropday = true;
-          break;
-        }
+        // track max deficit attained
         if (deficit > max_deficit) {
           max_deficit = deficit;
           idx_max_deficit = iidx;
           found_dropday = false;
         }
+
+        // a) check if reset due to drop below 0.0 is needed
+        if (deficit < 0.0) {
+          iidx_drop = iidx; // do not include last day in instance
+          break; // setting found_dropday = true is not needed due to the break
+        }
+        // b1) check if reset due to absolute drop below max_deficit is needed
+        if (absolute_reset_enabled && deficit < max_deficit - reset_abs_thresh) {
+          iidx_drop = iidx; // do not include last day in instance
+          break;
+        }
+        // b2) check if reset due to relative drop below max_deficit is needed
+        if (relative_reset_enabled && deficit < max_deficit - max_deficit*reset_rel_thresh) {
+          iidx_drop = iidx; // do not include last day in instance
+          break; // due to relative reset
+          //
+        }
+        // c) check if reset due to doy is needed
+        if (reset_enabled && doy[iidx - 1] == reset_day) {
+          iidx_drop = iidx + 1;
+          // If we reset due to doy, always include last day in the instance (even if it might have a thresh_drop)
+          iinst_out[iidx - 1] = instance;
+          dday_out[iidx - 1] = dday;
+          deficit_out[iidx - 1] = deficit;
+          break;
+        }
+
+
+        // if not yet reset (i.e. not break):
+        // check if dropday is found for filling in instance
         if (deficit < max_deficit * thresh_drop && !found_dropday) {
           iidx_drop = iidx;
           found_dropday = true;
         }
 
+        // continue filling in instance properties only while no dropday found
+        // the day of the drop itself is not used
         if (!found_dropday) {
           iinst_out[iidx - 1] = instance;
           dday_out[iidx - 1] = dday;
@@ -63,10 +100,6 @@ List cwd_deficit_cpp(
         }
         deficit_out[iidx - 1] = deficit;
 
-        if (reset_enabled && doy[iidx - 1] == reset_day) {
-          if (!found_dropday) iidx_drop = iidx + 1;
-          break;
-        }
         ++iidx;
       }
 

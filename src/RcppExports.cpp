@@ -11,8 +11,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // cwd_deficit_cpp
-List cwd_deficit_cpp(NumericVector wbal, IntegerVector doy, double thresh_drop, Nullable<int> doy_reset);
-RcppExport SEXP _cwd_cwd_deficit_cpp(SEXP wbalSEXP, SEXP doySEXP, SEXP thresh_dropSEXP, SEXP doy_resetSEXP) {
+List cwd_deficit_cpp(NumericVector wbal, IntegerVector doy, double thresh_drop, Nullable<int> doy_reset, Nullable<double> thresh_reset_absolute, Nullable<double> thresh_reset_relative);
+RcppExport SEXP _cwd_cwd_deficit_cpp(SEXP wbalSEXP, SEXP doySEXP, SEXP thresh_dropSEXP, SEXP doy_resetSEXP, SEXP thresh_reset_absoluteSEXP, SEXP thresh_reset_relativeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerVector >::type doy(doySEXP);
     Rcpp::traits::input_parameter< double >::type thresh_drop(thresh_dropSEXP);
     Rcpp::traits::input_parameter< Nullable<int> >::type doy_reset(doy_resetSEXP);
-    rcpp_result_gen = Rcpp::wrap(cwd_deficit_cpp(wbal, doy, thresh_drop, doy_reset));
+    Rcpp::traits::input_parameter< Nullable<double> >::type thresh_reset_absolute(thresh_reset_absoluteSEXP);
+    Rcpp::traits::input_parameter< Nullable<double> >::type thresh_reset_relative(thresh_reset_relativeSEXP);
+    rcpp_result_gen = Rcpp::wrap(cwd_deficit_cpp(wbal, doy, thresh_drop, doy_reset, thresh_reset_absolute, thresh_reset_relative));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -38,7 +40,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cwd_cwd_deficit_cpp", (DL_FUNC) &_cwd_cwd_deficit_cpp, 4},
+    {"_cwd_cwd_deficit_cpp", (DL_FUNC) &_cwd_cwd_deficit_cpp, 6},
     {"_cwd_cwd_surplus_cpp", (DL_FUNC) &_cwd_cwd_surplus_cpp, 2},
     {NULL, NULL, 0}
 };
