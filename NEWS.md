@@ -1,3 +1,5 @@
+# cwd (development version)
+
 # cwd 3.0.3
 * Added back previously removed arguments:
   * argument `thresh_reset_absolute` (i.e. absolute threshold-based event re-setting. 
