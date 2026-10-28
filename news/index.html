@@ -21,7 +21,7 @@
         <a class="external-link hidden-md hidden-lg" href="https://geco-group.org/">
           <img src="https://raw.githubusercontent.com/computationales/GECO_template/main/geco_logo_white_small.png" id="hexlogo" alt="GECO"></a>
         <a class="navbar-brand" href="../index.html">
-           <i>cwd <small>v3.0.2</small></i>
+           <i>cwd <small>v3.0.3</small></i>
         </a>
       </div>
     </div>
@@ -52,9 +52,18 @@
   <div class="col-md-9 contents">
     <div class="page-header">
       <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href="https://github.com/geco-bern/cwd/blob/v3.0.2/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/geco-bern/cwd/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="3.0.3" id="cwd-303">cwd 3.0.3<a class="anchor" aria-label="anchor" href="#cwd-303"></a></h2>
+<ul><li>Added back previously removed arguments:
+<ul><li>argument <code>thresh_reset_absolute</code> (i.e. absolute threshold-based event re-setting. Resets CWD to zero and terminates event once deficit falls that amount below event peak. Same as previous <code>thresh_terminate_absolute</code>).</li>
+<li>argument <code>thresh_reset_relative</code> (i.e. relative threshold-based event re-setting, Resets CWD to zero and terminates event once deficit falls below a specified fraction of the event peak. Same as previous <code>thresh_terminate_relative</code>).</li>
+</ul></li>
+<li>Fix: bug where length of deficit instance included day after drop below 0mm</li>
+<li>Breaking change: instances terminated by <code>doy_reset</code> now always include last day (even if it would have a drop). Result change is expected to be very limited (off-by 1 day at most). Moreover, this is expected to be an edge case, given that <code>doy_reset</code> is expected to be set outside of periods with strong deficits.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="3.0.2" id="cwd-302">cwd 3.0.2<a class="anchor" aria-label="anchor" href="#cwd-302"></a></h2>
 <ul><li>Fix: bug where deficit of last time step was uninitialised (zero).</li>
