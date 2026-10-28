@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author">Beni
 Stocker</h4>
             
-            <h4 data-toc-skip class="date">2026-07-29</h4>
+            <h4 data-toc-skip class="date">2026-10-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/geco-bern/cwd/blob/main/vignettes/cwd_example.Rmd" class="external-link"><code>vignettes/cwd_example.Rmd</code></a></small>
       <div class="hidden name"><code>cwd_example.Rmd</code></div>
@@ -234,41 +234,39 @@ units, or equivalently in mm/d.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out_cwd</span><span class="op">$</span><span class="va">inst</span></span></code></pre></div>
 <pre><code><span><span class="co">##    idx_start len iinst date_start   date_end max_deficit idx_max_deficit</span></span>
-<span><span class="co">## 1         22  22     4 2005-01-22 2005-02-12    7.764306              39</span></span>
-<span><span class="co">## 2         44  33     5 2005-02-13 2005-03-17   22.014083              72</span></span>
-<span><span class="co">## 3        144  91    13 2005-05-24 2005-08-22   76.584127             198</span></span>
-<span><span class="co">## 4        236  40    14 2005-08-24 2005-10-02   39.072879             251</span></span>
-<span><span class="co">## 5        278 137    15 2005-10-05 2006-02-18   37.219533             382</span></span>
-<span><span class="co">## 6        518  88    24 2006-06-02 2006-08-28  106.801695             573</span></span>
-<span><span class="co">## 7        646  43    29 2006-10-08 2006-11-19   20.232584             666</span></span>
-<span><span class="co">## 8        825  43    49 2007-04-05 2007-05-17   46.022031             851</span></span>
-<span><span class="co">## 9        978  23    65 2007-09-05 2007-09-27   19.154034             990</span></span>
-<span><span class="co">## 10      1001  45    66 2007-09-28 2007-11-11   31.778082            1019</span></span>
-<span><span class="co">## 11      1075  27    69 2007-12-11 2008-01-06   10.759122            1098</span></span>
-<span><span class="co">## 12      1134  23    72 2008-02-08 2008-03-01    5.028310            1151</span></span>
-<span><span class="co">## 13      1217 205    80 2008-05-01 2008-11-21  123.280649            1318</span></span>
-<span><span class="co">## 14      1436  63    82 2008-12-06 2009-02-06   15.863117            1449</span></span>
-<span><span class="co">## 15      1503  20    84 2009-02-11 2009-03-02   11.271995            1517</span></span>
-<span><span class="co">## 16      1572  23    90 2009-04-21 2009-05-13   16.475135            1577</span></span>
-<span><span class="co">## 17      1597 286    91 2009-05-16 2010-02-25  153.669072            1741</span></span>
-<span><span class="co">## 18      1922  30    94 2010-04-06 2010-05-05   39.106875            1945</span></span>
-<span><span class="co">## 19      1998 186    98 2010-06-21 2010-12-23  117.693244            2028</span></span>
-<span><span class="co">## 20      2286  65   105 2011-04-05 2011-06-08   37.333746            2322</span></span>
-<span><span class="co">## 21      2361  25   107 2011-06-19 2011-07-13   39.448022            2378</span></span>
-<span><span class="co">## 22      2396  43   110 2011-07-24 2011-09-04   34.688899            2436</span></span>
-<span><span class="co">## 23      2454  20   112 2011-09-20 2011-10-09   30.211974            2469</span></span>
-<span><span class="co">## 24      2484  48   114 2011-10-20 2011-12-06   22.007549            2526</span></span>
-<span><span class="co">## 25      2584  31   123 2012-01-28 2012-02-27   11.610848            2609</span></span>
-<span><span class="co">## 26      2747  92   138 2012-07-09 2012-10-08   71.835714            2790</span></span>
-<span><span class="co">## 27      2929  24   148 2013-01-07 2013-01-30   11.648926            2950</span></span>
-<span><span class="co">## 28      2959  31   150 2013-02-06 2013-03-08   18.555859            2985</span></span>
-<span><span class="co">## 29      3085 148   163 2013-06-12 2013-11-06  127.542176            3171</span></span>
-<span><span class="co">## 30      3251  25   168 2013-11-25 2013-12-19   11.041014            3271</span></span>
-<span><span class="co">## 31      3350  25   180 2014-03-04 2014-03-28   12.542856            3367</span></span>
-<span><span class="co">## 32      3435  64   186 2014-05-28 2014-07-30   86.621857            3474</span></span>
-<span><span class="co">## 33      3515  37   191 2014-08-16 2014-09-21   25.587160            3524</span></span>
-<span><span class="co">## 34      3552  26   192 2014-09-22 2014-10-17   15.612616            3569</span></span>
-<span><span class="co">## 35      3610  26   198 2014-11-19 2014-12-14   12.422168            3631</span></span></code></pre>
+<span><span class="co">## 1         22  21     4 2005-01-22 2005-02-11    7.764306              39</span></span>
+<span><span class="co">## 2         44  32     5 2005-02-13 2005-03-16   22.014083              72</span></span>
+<span><span class="co">## 3        144  90    13 2005-05-24 2005-08-21   76.584127             198</span></span>
+<span><span class="co">## 4        236  39    14 2005-08-24 2005-10-01   39.072879             251</span></span>
+<span><span class="co">## 5        278 136    15 2005-10-05 2006-02-17   37.219533             382</span></span>
+<span><span class="co">## 6        518  87    24 2006-06-02 2006-08-27  106.801695             573</span></span>
+<span><span class="co">## 7        646  42    29 2006-10-08 2006-11-18   20.232584             666</span></span>
+<span><span class="co">## 8        825  42    49 2007-04-05 2007-05-16   46.022031             851</span></span>
+<span><span class="co">## 9        978  22    65 2007-09-05 2007-09-26   19.154034             990</span></span>
+<span><span class="co">## 10      1001  44    66 2007-09-28 2007-11-10   31.778082            1019</span></span>
+<span><span class="co">## 11      1075  26    69 2007-12-11 2008-01-05   10.759122            1098</span></span>
+<span><span class="co">## 12      1134  22    72 2008-02-08 2008-02-29    5.028310            1151</span></span>
+<span><span class="co">## 13      1217 204    80 2008-05-01 2008-11-20  123.280649            1318</span></span>
+<span><span class="co">## 14      1436  62    82 2008-12-06 2009-02-05   15.863117            1449</span></span>
+<span><span class="co">## 15      1572  22    90 2009-04-21 2009-05-12   16.475135            1577</span></span>
+<span><span class="co">## 16      1597 285    91 2009-05-16 2010-02-24  153.669072            1741</span></span>
+<span><span class="co">## 17      1922  29    94 2010-04-06 2010-05-04   39.106875            1945</span></span>
+<span><span class="co">## 18      1998 185    98 2010-06-21 2010-12-22  117.693244            2028</span></span>
+<span><span class="co">## 19      2286  64   105 2011-04-05 2011-06-07   37.333746            2322</span></span>
+<span><span class="co">## 20      2361  24   107 2011-06-19 2011-07-12   39.448022            2378</span></span>
+<span><span class="co">## 21      2396  42   110 2011-07-24 2011-09-03   34.688899            2436</span></span>
+<span><span class="co">## 22      2484  47   114 2011-10-20 2011-12-05   22.007549            2526</span></span>
+<span><span class="co">## 23      2584  30   123 2012-01-28 2012-02-26   11.610848            2609</span></span>
+<span><span class="co">## 24      2747  91   138 2012-07-09 2012-10-07   71.835714            2790</span></span>
+<span><span class="co">## 25      2929  23   148 2013-01-07 2013-01-29   11.648926            2950</span></span>
+<span><span class="co">## 26      2959  30   150 2013-02-06 2013-03-07   18.555859            2985</span></span>
+<span><span class="co">## 27      3085 147   163 2013-06-12 2013-11-05  127.542176            3171</span></span>
+<span><span class="co">## 28      3251  24   168 2013-11-25 2013-12-18   11.041014            3271</span></span>
+<span><span class="co">## 29      3350  24   180 2014-03-04 2014-03-27   12.542856            3367</span></span>
+<span><span class="co">## 30      3435  63   186 2014-05-28 2014-07-29   86.621857            3474</span></span>
+<span><span class="co">## 31      3515  36   191 2014-08-16 2014-09-20   25.587160            3524</span></span>
+<span><span class="co">## 32      3552  25   192 2014-09-22 2014-10-16   15.612616            3569</span></span>
+<span><span class="co">## 33      3610  25   198 2014-11-19 2014-12-13   12.422168            3631</span></span></code></pre>
 <p>You can for example plot the distribution of event (instance) length
 (here in days):</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
