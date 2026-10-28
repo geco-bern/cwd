@@ -1,4 +1,4 @@
-# cwd (development version)
+# cwd 3.0.3
 * Added back previously removed arguments:
   * argument `thresh_reset_absolute` (i.e. absolute threshold-based event re-setting. 
   Resets CWD to zero and terminates event once deficit falls that amount below event peak.
