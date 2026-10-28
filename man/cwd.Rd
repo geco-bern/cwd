@@ -11,9 +11,10 @@ cwd(
   thresh_drop = 0,
   doy_reset = NA,
   thresh_reset_absolute = NA,
-  do_surplus = FALSE,
   thresh_reset_relative = NA_real_,
-  thresh_terminate_absolute = NULL
+  do_surplus = FALSE,
+  thresh_terminate_absolute = NULL,
+  thresh_terminate_relative = NULL
 )
 }
 \arguments{
@@ -34,13 +35,13 @@ after rain events but before full compensation of CWD. Defaults to 0.}
 the event to end the event and reset CWD to zero. Units are the same as \code{varname_wbal}. Defaults to \code{NA}
 (not considered).}
 
-\item{do_surplus}{A logical specifying whether the cumulative surplus should be calculated.
-Defaults to \code{FALSE}.}
-
 \item{thresh_reset_relative}{Fraction of the event's peak by which CWD must fall
 to end the event and reset CWD to zero. Must be between 0 and 1. For example, \code{0.1}
 terminates an event once CWD falls by 10 percent, i.e. below 90 percent of its peak.
 Defaults to \code{NA} (not considered). Cannot be combined with \code{thresh_reset_absolute}.}
+
+\item{do_surplus}{A logical specifying whether the cumulative surplus should be calculated.
+Defaults to \code{FALSE}.}
 
 \item{thresh_terminate_absolute}{Deprecated argument. Use
 \code{thresh_reset_absolute} instead; supplying this argument raises an error.}

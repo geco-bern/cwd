@@ -54,13 +54,20 @@ cwd <- function(
   thresh_drop = 0.0,
   doy_reset = NA,
   thresh_reset_absolute = NA,
-  do_surplus = FALSE,
   thresh_reset_relative = NA_real_,
-  thresh_terminate_absolute = NULL
+  do_surplus = FALSE,
+  thresh_terminate_absolute = NULL,
+  thresh_terminate_relative = NULL
 ) {
   if (!missing(thresh_terminate_absolute)) {
     stop(
       "`thresh_terminate_absolute` was renamed to `thresh_reset_absolute`; use `thresh_reset_absolute` instead.",
+      call. = FALSE
+    )
+  }
+  if (!missing(thresh_terminate_relative)) {
+    stop(
+      "`thresh_terminate_relative` was renamed to `thresh_reset_relative`; use `thresh_reset_relative` instead.",
       call. = FALSE
     )
   }
