@@ -1,7 +1,11 @@
 # cwd (development version)
 * Added back previously removed arguments:
-  * argument `thresh_reset_absolute` (i.e. absolute threshold-based event re-setting, 
-  same as previous `thresh_terminate_absolute`).
+  * argument `thresh_reset_absolute` (i.e. absolute threshold-based event re-setting. 
+  Resets CWD to zero and terminates event once deficit falls that amount below event peak.
+  Same as previous `thresh_terminate_absolute`).
+  * argument `thresh_reset_relative` (i.e. relative threshold-based event re-setting, 
+  Resets CWD to zero and terminates event once deficit falls below a specified fraction of 
+  the event peak. Same as previous `thresh_terminate_relative`).
 * Fix: bug where length of deficit instance included day after drop below 0mm
 * Breaking change: instances terminated by `doy_reset` now always include last day (even if 
   it would have a drop). Result change is expected to be very limited (off-by 1 day at most). 

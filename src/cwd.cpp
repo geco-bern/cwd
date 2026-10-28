@@ -11,7 +11,8 @@ List cwd_deficit_cpp(
     IntegerVector doy,
     double thresh_drop,
     Nullable<int> doy_reset = R_NilValue,
-    Nullable<double> thresh_reset_absolute = R_NilValue) {
+    Nullable<double> thresh_reset_absolute = R_NilValue,
+    Nullable<double> thresh_reset_relative = R_NilValue) {
   const int n = wbal.size();
   NumericVector iinst_out(n, NA_REAL);
   NumericVector dday_out(n, NA_REAL);
@@ -25,9 +26,12 @@ List cwd_deficit_cpp(
   int iidx_drop = 0;
   const bool reset_enabled = doy_reset.isNotNull();
   const int reset_day = reset_enabled ? as<int>(doy_reset) : NA_INTEGER;
-  const bool thres_reset_enabled = thresh_reset_absolute.isNotNull();
-  const double reset_thresh = thres_reset_enabled ? as<double>(thresh_reset_absolute) : NA_REAL;
-  const bool absolute_reset_enabled = thres_reset_enabled && !std::isnan(reset_thresh);
+  const bool thres_reset_abs_enabled = thresh_reset_absolute.isNotNull();
+  const bool thres_reset_rel_enabled = thresh_reset_relative.isNotNull();
+  const double reset_abs_thresh = thres_reset_abs_enabled ? as<double>(thresh_reset_absolute) : NA_REAL;
+  const double reset_rel_thresh = thres_reset_rel_enabled ? as<double>(thresh_reset_relative) : NA_REAL;
+  const bool absolute_reset_enabled = thres_reset_abs_enabled && !std::isnan(reset_abs_thresh);
+  const bool relative_reset_enabled = thres_reset_rel_enabled && !std::isnan(reset_rel_thresh);
 
   while (idx <= n - 1) {
     ++idx;
@@ -58,10 +62,16 @@ List cwd_deficit_cpp(
           iidx_drop = iidx; // do not include last day in instance
           break; // setting found_dropday = true is not needed due to the break
         }
-        // b) check if reset due to absolute drop below max_deficit is needed
-        if (absolute_reset_enabled && deficit < max_deficit - reset_thresh) {
+        // b1) check if reset due to absolute drop below max_deficit is needed
+        if (absolute_reset_enabled && deficit < max_deficit - reset_abs_thresh) {
           iidx_drop = iidx; // do not include last day in instance
           break;
+        }
+        // b2) check if reset due to relative drop below max_deficit is needed
+        if (relative_reset_enabled && deficit < max_deficit - max_deficit*reset_rel_thresh) {
+          iidx_drop = iidx; // do not include last day in instance
+          break; // due to relative reset
+          //
         }
         // c) check if reset due to doy is needed
         if (reset_enabled && doy[iidx - 1] == reset_day) {
